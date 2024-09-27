@@ -3,9 +3,9 @@ from sqlalchemy import text
 from dotenv import load_dotenv
 
 load_dotenv() #laod the env variables
-connector = Connector('localhost',3306)
-conn = connector.create_connection()
+connector = Connector("create_connection")
+conn = connector.conn
 with conn.connect() as connection:
-    result = connection.execute(text("SELECT * FROM orders"))
+    result = connection.execute(text("SELECT name FROM master.dbo.sysdatabases"))
     tables = result.fetchall()
     print(tables)
