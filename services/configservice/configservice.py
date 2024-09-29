@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 import os
 config = ConfigParser()
-env_file_path = os.path.join(os.getcwd(),'env-config.ini')
+env_file_path = os.path.join(os.getcwd(),'.env-config.ini')
 config.read(env_file_path)
 
 class ConfigService:
@@ -16,6 +16,8 @@ class ConfigService:
 
 
     def get_sections(self):
+
+
         print(config.sections())
 
     def getconfig(self, param):
