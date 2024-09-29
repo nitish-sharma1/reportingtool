@@ -1,1 +1,3 @@
 /.env
+/env-config.ini
+services/configservice/

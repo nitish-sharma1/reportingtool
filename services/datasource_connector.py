@@ -1,18 +1,28 @@
 import os
 from sqlalchemy import create_engine
+from reportingtool.services.configservice.configservice import ConfigService
 
 
 class Connector:
-    def __init__(self, database_type,instance_name):
+    def __init__(self, database_type):
         self.database_type = database_type
-        self.instance_name = instance_name
-    def create_engine(self):
-        if self.database_type == 'MSSQL' :
-            return self.connect_mssql()
 
+    def create_engine(self,instance_name):
+        if self.database_type == 'mssql':
+            return self.connect_mssql(instance_name)
 
-    def connect_mssql(self):
-        connection_string = f'mssql+pyodbc://{self.user}:{self.password}@{self.host}:{self.port}/master?driver=ODBC+Driver+17+for+SQL+Server'
+    def connect_mssql(self,instance):
+        conf = ConfigService()
+        print(conf)
+        config = conf.getconfig(instance)
+
+        user = config["User"]
+        password = config["Password"]
+        host = config["Host"]
+        port = config["Port"]
+        dbname = config["Dbname"]
+        driver = config["Driver"]
+        connection_string = f'mssql+pyodbc://{user}:{password}@{host}:{port}/{dbname}"?driver={driver}'
         engine = create_engine(connection_string, echo=True)
         return engine
 
@@ -20,3 +30,4 @@ class Connector:
         pass
 
     def connect_postgres(self):
+        pass
