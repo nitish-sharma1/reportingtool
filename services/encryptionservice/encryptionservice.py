@@ -15,3 +15,5 @@ class Encryption_Service:
         f = Fernet(self.key)
         plain_text = f.decrypt(encoded_string.encode('utf-8'))
         return plain_text.decode('utf-8')
+
+

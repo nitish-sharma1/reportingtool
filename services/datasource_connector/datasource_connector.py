@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import create_engine
 from reportingtool.services.configservice.configservice import ConfigService
+from reportingtool.services.encryptionservice.encryptionservice import Encryption_Service
 
 
 class Connector:
@@ -20,9 +21,9 @@ class Connector:
         conf = ConfigService()
         print(conf)
         config = conf.getconfig(instance)
-
+        decrypt = Encryption_Service()
         user = config["User"]
-        password = config["Password"]
+        password = decrypt.decrypt(config["Password"])
         host = config["Host"]
         port = config["Port"]
         dbname = config["Dbname"]
@@ -35,8 +36,9 @@ class Connector:
     def connect_mysql(instance):
         conf = ConfigService()
         config = conf.getconfig(instance)
+        decrypt = Encryption_Service()
         user = config["User"]
-        password = config["Password"]
+        password = decrypt.decrypt(config["Password"])
         host = config["Host"]
         port = config["Port"]
         dbname = config["Dbname"]
@@ -48,8 +50,9 @@ class Connector:
     def connect_postgres(instance):
         conf = ConfigService()
         config = conf.getconfig(instance)
+        decrypt = Encryption_Service()
         user = config["User"]
-        password = config["Password"]
+        password = decrypt.decrypt(config["Password"])
         host = config["Host"]
         port = config["Port"]
         dbname = config["Dbname"]
