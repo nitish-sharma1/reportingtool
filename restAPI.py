@@ -1,17 +1,33 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from services.reportconfigservice.reportconfigservice import Report_config_service
+from marshmallow import Schema, fields, ValidationError
 
 app = Flask(__name__)
 CORS(app)
 
 
+class ConfigSchema(Schema):
+    database_type = fields.Str(required=True)
+    instance_name = fields.Str(required=True)
+    report_time = fields.Str(required=True)
+    frequency = fields.List(fields.Str(), required=True)
+
+    class Meta:
+        strict = True
+
 @app.route('/api/v1/add-config', methods=["POST"])
 def add_config_to_mongo():
-    body = request.get_json()
+    schema = ConfigSchema()
+    body = request.json
+    try:
+        report_data = schema.load(body)
+
+    except ValidationError as err:
+        return jsonify(err.messages), 400  # Return validation errors
     config_service = Report_config_service()
     try:
-        result = config_service.add_config(body)
+        result = config_service.add_config(report_data)
         return {"msg": "added config successfully"}, 200
 
     except Exception as e:
