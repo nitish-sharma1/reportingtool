@@ -12,6 +12,9 @@ class ConfigSchema(Schema):
     instance_name = fields.Str(required=True)
     report_time = fields.Str(required=True)
     frequency = fields.List(fields.Str(), required=True)
+    report_name = fields.Str(required=True)
+    query = fields.Str(required=True)
+
 
     class Meta:
         strict = True
