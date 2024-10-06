@@ -10,7 +10,10 @@ class Datetime_Service:
         concurrent_time = str(self.datetime_now.time())
         return concurrent_time[0:5]
 
-    def get_current_day(self):
+    @staticmethod
+    def get_current_day():
         days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-        current_day = self.datetime_now.day
+        today = datetime.date.today()
+        current_day = today.weekday()
         return days[current_day]
+

@@ -5,12 +5,17 @@ from reportingtool.services.reportconfigservice.reportconfigservice import Repor
 from services.encryptionservice.encryptionservice import Encryption_Service
 from services.datetime_service.datetime_service import Datetime_Service
 
+from services.loggingservice.loggingservice import Logger
+
 load_dotenv()  #laod the env variables
 
+logger = Logger()
+
+logger.info('staring the service')
 dt = Datetime_Service()
 print(dt.get_current_day())
 print(dt.get_current_time_str())
-
+logger.info('ending the service')
 # connector = Connector(database_type="postgres")
 # conn = connector.create_engine('reprotingdb')
 # with conn.connect() as connection:
