@@ -8,15 +8,25 @@ from services.datetime_service.datetime_service import Datetime_Service
 from services.loggingservice.loggingservice import Logger
 
 load_dotenv()  #laod the env variables
-
-logger = Logger()
-
-logger.info('staring the service')
+logger = Logger() #staring the logger for the main
+logger.info('stated executing the main ...')
 dt = Datetime_Service()
-print(dt.get_current_day())
-print(dt.get_current_time_str())
+current_time = dt.get_current_time_str()
+current_day = dt.get_current_day()
+query = {
+    "$and": [
+        {"report_time": current_time},
+        {"frequency": current_day}
+    ]
+}
+Report_conf = Report_config_service()
+result = Report_conf.get_config(query=query)
+for q in result:
+    print(q)
+
 logger.info('ending the service')
 # connector = Connector(database_type="postgres")
+
 # conn = connector.create_engine('reprotingdb')
 # with conn.connect() as connection:
 #     result = connection.execute(text("select * from posts"))
