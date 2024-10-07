@@ -2,13 +2,17 @@ from reportingtool.services.datasource_connector.datasource_connector import Con
 from sqlalchemy import text
 from dotenv import load_dotenv
 from reportingtool.services.reportconfigservice.reportconfigservice import Report_config_service
+from reportingtool.services.smtpservice.smtpservice import SMTPService
 from services.encryptionservice.encryptionservice import Encryption_Service
 from services.datetime_service.datetime_service import Datetime_Service
 
 from services.loggingservice.loggingservice import Logger
 
 load_dotenv()  #laod the env variables
-logger = Logger() #staring the logger for the main
+
+smtp = SMTPService()
+smtp.send_mail('randommail@gmail.com', 'hello', 'this is a test mail')
+logger = Logger()  #staring the logger for the main
 logger.info('stated executing the main ...')
 dt = Datetime_Service()
 current_time = dt.get_current_time_str()
