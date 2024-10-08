@@ -1,6 +1,8 @@
 from reportingtool.services.datasource_connector.datasource_connector import Connector
 from sqlalchemy import text
 from dotenv import load_dotenv
+
+from reportingtool.services.excel_report_service.excel_report_service import ExcelReportService
 from reportingtool.services.reportconfigservice.reportconfigservice import Report_config_service
 from reportingtool.services.smtpservice.smtpservice import SMTPService
 from services.encryptionservice.encryptionservice import Encryption_Service
@@ -33,8 +35,10 @@ for report_details in result:
         conn = connector.create_engine(instance_name=instance_name)
         with conn.connect() as connection:
             result = connection.execute(text(query))
-            tables = result.fetchall()
-            print(tables)
+            data = result.fetchall()
+            headers = list(result.keys())
+            excel_helper = ExcelReportService()
+            excel_helper.generate_excel(headers, data, report_name)
     except Exception as e:
         print(e)
 

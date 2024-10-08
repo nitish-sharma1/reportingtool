@@ -7,7 +7,7 @@ class Report_config_service:
     def __init__(self):
         pass
 
-    def add_config(self,config,database_name='report_configs',collection_name='config'):
+    def add_config(self, config, database_name='report_configs', collection_name='config'):
         client = self.create_client(database_name)
         mydb = client[database_name]
         collection = mydb[collection_name]
@@ -17,8 +17,7 @@ class Report_config_service:
         except Exception as e:
             raise e
 
-
-    def get_config(self,query,database_name='report_configs',collection_name='config'):
+    def get_config(self, query, database_name='report_configs', collection_name='config'):
         client = self.create_client(database_name)
         mydb = client[database_name]
         collection = mydb[collection_name]
@@ -27,7 +26,6 @@ class Report_config_service:
             return x
         except Exception as e:
             raise e
-
 
     @staticmethod
     def create_client(database_name):
@@ -38,6 +36,3 @@ class Report_config_service:
         connection_string = f"mongodb://{host}:{port}/"
         myclient = pymongo.MongoClient(connection_string)
         return myclient
-
-
-
