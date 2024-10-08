@@ -10,8 +10,6 @@ from services.loggingservice.loggingservice import Logger
 
 load_dotenv()  #laod the env variables
 
-smtp = SMTPService()
-smtp.send_mail('randommail@gmail.com', 'hello', 'this is a test mail')
 logger = Logger()  #staring the logger for the main
 logger.info('stated executing the main ...')
 dt = Datetime_Service()
@@ -25,14 +23,19 @@ query = {
 }
 Report_conf = Report_config_service()
 result = Report_conf.get_config(query=query)
-for q in result:
-    print(q)
+for report_details in result:
+    query = report_details['query']
+    database_type = report_details['database_type']
+    instance_name = report_details['instance_name']
+    report_name = report_details['report_name']
+    try:
+        connector = Connector(database_type=database_type)
+        conn = connector.create_engine(instance_name=instance_name)
+        with conn.connect() as connection:
+            result = connection.execute(text(query))
+            tables = result.fetchall()
+            print(tables)
+    except Exception as e:
+        print(e)
 
 logger.info('ending the service')
-# connector = Connector(database_type="postgres")
-
-# conn = connector.create_engine('reprotingdb')
-# with conn.connect() as connection:
-#     result = connection.execute(text("select * from posts"))
-#     tables = result.fetchall()
-#     print(tables)
