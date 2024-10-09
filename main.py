@@ -40,7 +40,7 @@ for report_details in result:
             excel_helper = ExcelReportService()
             generated_file_path = excel_helper.generate_excel(headers, data, report_name)
             email_service = SMTPService()
-            email_service.send_mail(to='nitishsharma.sharma2@gmail.com',subject='stock_recon',body='PFA report',attachment_path=generated_file_path)
+            email_service.send_mail(to='your_email_add',subject='stock_recon',body='PFA report',attachment_path=generated_file_path)
     except Exception as e:
         print(e)
 
