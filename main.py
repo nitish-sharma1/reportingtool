@@ -38,7 +38,9 @@ for report_details in result:
             data = result.fetchall()
             headers = list(result.keys())
             excel_helper = ExcelReportService()
-            excel_helper.generate_excel(headers, data, report_name)
+            generated_file_path = excel_helper.generate_excel(headers, data, report_name)
+            email_service = SMTPService()
+            email_service.send_mail(to='nitishsharma.sharma2@gmail.com',subject='stock_recon',body='PFA report',attachment_path=generated_file_path)
     except Exception as e:
         print(e)
 

@@ -14,3 +14,4 @@ class ExcelReportService:
             sheet.append(list(row))
         file_name = os.path.join('reports', f'{report_name}.xlsx')
         workbook.save(file_name)
+        return file_name
