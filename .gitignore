@@ -1,3 +1,4 @@
 /.env
 /.env-config.ini
 reports
+/ encryption_tool.py

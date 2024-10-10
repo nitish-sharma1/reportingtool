@@ -7,6 +7,7 @@ from reportingtool.services.reportconfigservice.reportconfigservice import Repor
 from reportingtool.services.smtpservice.smtpservice import SMTPService
 from services.encryptionservice.encryptionservice import Encryption_Service
 from services.datetime_service.datetime_service import Datetime_Service
+from services.aws_s3_service.aws_s3_service import S3Upload
 
 from services.loggingservice.loggingservice import Logger
 
@@ -39,8 +40,8 @@ for report_details in result:
             headers = list(result.keys())
             excel_helper = ExcelReportService()
             generated_file_path = excel_helper.generate_excel(headers, data, report_name)
-            email_service = SMTPService()
-            email_service.send_mail(to='your_email_add',subject='stock_recon',body='PFA report',attachment_path=generated_file_path)
+            s3 = S3Upload()
+            s3.upload_doc_to_s3(generated_file_path,'dnireports',f'{report_name}.xlsx')
     except Exception as e:
         print(e)
 
