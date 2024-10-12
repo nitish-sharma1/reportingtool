@@ -1,38 +1,26 @@
 import paramiko
 import time
+from reportingtool.services.configservice.configservice import ConfigService
 
 
-try:
-    # Create an SSH client
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+class SftpService:
+    def __init__(self, config_name):
+        conf = ConfigService()
+        config = conf.getconfig(config_name)
+        self.hostname = config['hostname']
+        self.port = config['port']
+        self.username = config['username']
+        self.password = config['password']
+        self.remote_file_path = config['remote_file_path']
 
-    # Connect to the SFTP server
-    ssh.connect(hostname, port=port, username=username, password=password)
-    ssh.get_transport().set_keepalive(30)  # Sends keep-alive messages every 30 seconds
-    stdin, stdout, stderr = ssh.exec_command('echo "Hello World"', timeout=300)
-    # Read command output and errors
-    # Read output line by line
-    while not stdout.channel.closed:
-        if stdout.channel.recv_ready():
-            output = stdout.channel.recv(1024).decode('utf-8')
-            print(output, end='')
+    def send_file_via_sftp(self, file_path):
+        try:
+            transport = paramiko.Transport((self.hostname, self.port))
+            transport.connect(username=self.username, password=self.password)
+            sftp = paramiko.SFTPClient.from_transport(transport)
+            sftp.put(file_path, self.remote_file_path)
+            sftp.close()
+            transport.close()
 
-        if stderr.channel.recv_ready():
-            error = stderr.channel.recv(1024).decode('utf-8')
-            print("Error:", error, end='')
-
-        time.sleep(5)  # Prevent busy waiting
-
-    # Final read for any remaining output
-    if stdout.channel.recv_exit_status() is not None:  # Check if the command has completed
-        output = stdout.read().decode('utf-8')
-        print(output)
-
-    if stderr.channel.recv_exit_status() is not None:
-        error = stderr.read().decode('utf-8')
-        print("Error:", error)
-
-except Exception as e:
-    print(f"Error: {e}")
-
+        except Exception as e:
+            print(f'An error occurred: {e}')
