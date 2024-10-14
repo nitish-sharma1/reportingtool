@@ -17,4 +17,4 @@ class S3Upload:
                           aws_access_key_id=self.access_key,
                           aws_secret_access_key=self.secret_key,
                           region_name=self.region)
-        s3.upload_file(file_path,bucket_name,output_name)
+        return s3.upload_file(file_path,bucket_name,output_name)
