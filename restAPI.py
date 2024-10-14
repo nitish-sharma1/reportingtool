@@ -15,9 +15,9 @@ class ConfigSchema(Schema):
     report_name = fields.Str(required=True)
     query = fields.Str(required=True)
     recipents = fields.List(fields.Str(), required=True)
-    subject = fields.List(fields.Str(), required=True)
-    email_body = fields.List(fields.Str(), required=True)
-    transfer_type = fields.List(fields.Str(), required=True)
+    subject = fields.Str(required=True)
+    email_body = fields.Str(required=True)
+    transfer_type = fields.Str(required=True)
 
     class Meta:
         strict = True
