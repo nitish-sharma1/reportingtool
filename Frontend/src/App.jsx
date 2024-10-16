@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import './App.css'
-import ReportForm from './components/ReportForm'
+import LoginPage from './components/LoginPage'
+
+ 
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-     <ReportForm></ReportForm>
+    <LoginPage></LoginPage>
     </>
   )
 }
