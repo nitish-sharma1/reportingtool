@@ -1,7 +1,7 @@
+from sqlalchemy.exc import SQLAlchemyError
 from reportingtool.services.datasource_connector.datasource_connector import Connector
 from sqlalchemy import text
 from dotenv import load_dotenv
-
 from reportingtool.services.excel_report_service.excel_report_service import ExcelReportService
 from reportingtool.services.reportconfigservice.reportconfigservice import Report_config_service
 from reportingtool.services.smtpservice.smtpservice import SMTPService
@@ -46,12 +46,13 @@ for report_details in result:
             if not data:
                 logger.warning(f'No data returned for report: {report_name}')
                 continue  # Skip to the next report
-
+            excel_helper = ExcelReportService()
             generated_file_path = excel_helper.generate_excel(headers, data, report_name)
+            s3 = S3Upload()
             s3.upload_doc_to_s3(generated_file_path, 'dnireports', f'{report_name}.xlsx')
             logger.info(f'Report {report_name} successfully generated and uploaded.')
 
     except SQLAlchemyError as db_error:
-        logger.error(f"Database error for report '{report_name}': {db_error}", exc_info=True)
+        logger.error(f"Database error for report '{report_name}': {db_error}")
     except Exception as e:
-        logger.error(f"Unexpected error for report '{report_name}': {e}", exc_info=True)
+        logger.error(f"Unexpected error for report '{report_name}': {e}")
