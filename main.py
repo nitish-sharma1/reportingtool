@@ -31,18 +31,27 @@ for report_details in result:
     database_type = report_details['database_type']
     instance_name = report_details['instance_name']
     report_name = report_details['report_name']
+
+    logger.info(f'Processing report: {report_name}')
+
     try:
         connector = Connector(database_type=database_type)
         conn = connector.create_engine(instance_name=instance_name)
+
         with conn.connect() as connection:
             result = connection.execute(text(query))
             data = result.fetchall()
             headers = list(result.keys())
-            excel_helper = ExcelReportService()
-            generated_file_path = excel_helper.generate_excel(headers, data, report_name)
-            s3 = S3Upload()
-            s3.upload_doc_to_s3(generated_file_path,'dnireports',f'{report_name}.xlsx')
-    except Exception as e:
-        print(e)
 
-logger.info('ending the service')
+            if not data:
+                logger.warning(f'No data returned for report: {report_name}')
+                continue  # Skip to the next report
+
+            generated_file_path = excel_helper.generate_excel(headers, data, report_name)
+            s3.upload_doc_to_s3(generated_file_path, 'dnireports', f'{report_name}.xlsx')
+            logger.info(f'Report {report_name} successfully generated and uploaded.')
+
+    except SQLAlchemyError as db_error:
+        logger.error(f"Database error for report '{report_name}': {db_error}", exc_info=True)
+    except Exception as e:
+        logger.error(f"Unexpected error for report '{report_name}': {e}", exc_info=True)
