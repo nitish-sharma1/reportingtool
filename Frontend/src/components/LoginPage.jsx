@@ -1,9 +1,12 @@
 import React from 'react'
-import Logo from './Logo'
+
+import LoginCard from './LoginCard'
 
 function LoginPage() {
   return (
-    <div><Logo></Logo></div>
+    <div className='login w-full h-screen bg-bg-grey  flex items-center justify-center'>
+    <LoginCard></LoginCard>
+    </div>
   )
 }
 
