@@ -3,7 +3,7 @@ import logo from '../assets/logo.png'
 
 function Logo() {
   return (
-    <div><img src={logo} className='w-64'></img></div>
+    <div><img src={logo} className='w-full'></img></div>
   )
 }
 
