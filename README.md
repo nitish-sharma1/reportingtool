@@ -7,4 +7,8 @@ initial ideation
 Figma ui : 
 ![{D32D53C6-2303-42C1-AD96-00794540EB90}](https://github.com/user-attachments/assets/7642c8f6-b740-45b9-be80-a28dcbe486bb)
 
+configurator page ui :
+![{EA423F5F-E457-4CAD-87FC-2DA30CB1778A}](https://github.com/user-attachments/assets/76ddbe6f-3a1b-4210-b6c0-d51cc5924a38)
+
+
 
