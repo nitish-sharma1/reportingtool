@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import LoginPage from './components/LoginPage'
+import ConfigPage from './components/ConfigPage'
 
  
 
@@ -9,7 +10,8 @@ function App() {
 
   return (
     <>
-    <LoginPage></LoginPage>
+    {/* <LoginPage></LoginPage> */}
+    <ConfigPage></ConfigPage>
     </>
   )
 }
