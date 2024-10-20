@@ -18,10 +18,10 @@ function LoginForm() {
           placeholder="Password" 
           className="block w-full p-2 mb-4 border border-gray-300 bg-input rounded" 
         />
-        <button className="w-full p-2 bg-btn-green text-white rounded hover:bg-blue-600">
+        <button className="w-full p-2 bg-btn-purple text-white rounded hover:bg-blue-600">
           Login
         </button>
-        <p className='text-center m-2 text-btn-green'>Do not have the account ?</p>
+        <p className='text-center m-2 text-btn-purple'>Do not have the account ?</p>
         <button className="w-full p-2 bg-grey-dark text-white rounded hover:bg-blue-600">
           Sign-up
         </button>

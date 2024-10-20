@@ -6,7 +6,7 @@ function LoginCard() {
   return (
     
     <div className='bg-off-white w-2/5 p-4 rounded-lg flex flex-col items-center justify-center'>
-        <Logo></Logo>
+        <div className='w-80'><Logo></Logo></div>
         <LoginForm></LoginForm>
         
         

@@ -11,7 +11,7 @@ export default {
       'white': '#ffffff',
       'off-white': '#FFF8F8',
       'input': '#F1EEEE',
-      'btn-green': '#1FB973',
+      'btn-purple': '#5e17eb',
       'grey-dark': '#585656'
     }
   },
