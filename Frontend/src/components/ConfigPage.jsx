@@ -7,7 +7,7 @@ function ConfigPage() {
   return (
     <div className='bg-off-white flex flex-col h-screen overflow-hidden'>
         <NavBar></NavBar>
-        <div className='flex'> 
+        <div className='flex flex-grow'> 
         <SideBar></SideBar>
         <ConfigPageBody></ConfigPageBody>
         </div>

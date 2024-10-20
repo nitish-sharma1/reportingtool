@@ -2,11 +2,12 @@ import React from 'react';
 import { IoSettings } from "react-icons/io5";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { IoMdAnalytics } from "react-icons/io";
+import sidebarBottom from "../assets/sidebarbottom.gif"
 
 
 function SideBar() {
   return (
-    <div className="w-64 bg-white text-btn-purple h-screen scroll-n flex flex-col">
+    <div className="w-64 bg-white text-btn-purple h-full flex flex-col">
       
       <nav className="flex-1 p-4 mt-10 items-start justify-start">
         <ul className="space-y-4">
@@ -28,11 +29,9 @@ function SideBar() {
           </li>
         </ul>
       </nav>
-      <div className="p-4 border-t border-gray-700">
-        <button className="w-full bg-red-600 hover:bg-red-500 text-white p-2 rounded">
-          Log Out
-        </button>
-      </div>
+    <div className='m-4'>
+        <img src={sidebarBottom}/>
+    </div>
     </div>
   );
 }
