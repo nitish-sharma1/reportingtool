@@ -6,7 +6,7 @@ import cloudStorage from '../assets/cloudstorage.png'
 
 function ConfigPageBody() {
   return (
-    <div className='flex-grow bg-gray-200 flex justify-center  items-center p-4 '>
+    <div className='flex-grow bg-gray-200 flex justify-center  items-center p-4 cursor-pointer '>
         <ServiceCards imgsrc={datasource} msg="Add New Data Source"></ServiceCards>
         <ServiceCards imgsrc={report} msg="Schedule new report" ></ServiceCards>
         <ServiceCards imgsrc={cloudStorage} msg="Configure new SFTP / MFT / Mail-server"></ServiceCards>
