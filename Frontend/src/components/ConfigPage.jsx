@@ -2,6 +2,7 @@ import React from 'react'
 import NavBar from './NavBar'
 import ConfigPageBody from './ConfigPageBody'
 import SideBar from './SideBar'
+import AddDataSourceService from './sevicesCards/AddDataSourceService'
 
 function ConfigPage() {
   return (
@@ -9,7 +10,8 @@ function ConfigPage() {
         <NavBar></NavBar>
         <div className='flex flex-grow'> 
         <SideBar></SideBar>
-        <ConfigPageBody></ConfigPageBody>
+        {/* <ConfigPageBody></ConfigPageBody> */}
+        <AddDataSourceService></AddDataSourceService>
         </div>
         
 
