@@ -1,26 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from services.reportconfigservice.reportconfigservice import Report_config_service
-from marshmallow import Schema, fields, ValidationError
+from Schema.configschema import ConfigSchema
+from marshmallow import  ValidationError
 
 app = Flask(__name__)
 CORS(app)
 
 
-class ConfigSchema(Schema):
-    database_type = fields.Str(required=True)
-    instance_name = fields.Str(required=True)
-    report_time = fields.Str(required=True)
-    frequency = fields.List(fields.Str(), required=True)
-    report_name = fields.Str(required=True)
-    query = fields.Str(required=True)
-    recipents = fields.List(fields.Str(), required=False)
-    subject = fields.Str(required=False)
-    email_body = fields.Str(required=False)
-    transfer_type = fields.Str(required=True)
-
-    class Meta:
-        strict = True
 
 
 @app.route('/api/v1/add-config', methods=["POST"])
@@ -39,6 +26,12 @@ def add_config_to_mongo():
 
     except Exception as e:
         return {"msg": "somthing went wrong", "exception": e}, 500
+
+
+
+app.route('/api/v1/add-data-source', methods=["POST"] )
+def add_data_source():
+    body = request.json
 
 
 if __name__ == '__main__':
