@@ -19,30 +19,34 @@ function AddDataSourceService() {
           className="block w-96 p-2 mb-4 border border-gray-300 bg-input rounded" 
           required  
         />
+        <div className='flex'>
         <input 
           type="text" 
-          placeholder="username" 
-          className="block w-96 p-2 mb-4 border border-gray-300 bg-input rounded" 
-          required  
-        />
-        <input 
-          type="password" 
-          placeholder="password" 
-          className="block w-96 p-2 mb-4 border border-gray-300 bg-input rounded" 
+          placeholder="Username" 
+          className="block w-64 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
           required  
         />
         <input 
           type="text" 
-          placeholder="hostname" 
-          className="block w-96 p-2 mb-4 border border-gray-300 bg-input rounded" 
+          placeholder="Password" 
+          className="block w-64 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
+          required  
+        />
+        </div>
+        <div className='flex'>
+        <input 
+          type="text" 
+          placeholder="Hostname" 
+          className="block w-64 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
           required  
         />
         <input 
           type="text" 
-          placeholder="port" 
-          className="block w-96 p-2 mb-4 border border-gray-300 bg-input rounded" 
+          placeholder="Port" 
+          className="block w-64 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
           required  
         />
+        </div>
          <button className="w-full p-2 bg-btn-purple text-white rounded hover:bg-blue-600">
           Add DataSource
         </button>
