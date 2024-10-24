@@ -1,11 +1,12 @@
 import pymongo
 from reportingtool.services.configservice.configservice import ConfigService
 
+
 class MongoHelper():
     def __init__(self):
         pass
 
-    def add_config(self, config, database_name='report_configs', collection_name='config'):
+    def add_data_to_mongo_collection(self, config, database_name, collection_name):
         client = self.create_client(database_name)
         mydb = client[database_name]
         collection = mydb[collection_name]
@@ -15,7 +16,7 @@ class MongoHelper():
         except Exception as e:
             raise e
 
-    def get_config(self, query, database_name='report_configs', collection_name='config'):
+    def get_data_from_mongo(self, query, database_name, collection_name):
         client = self.create_client(database_name)
         mydb = client[database_name]
         collection = mydb[collection_name]
@@ -28,7 +29,7 @@ class MongoHelper():
     @staticmethod
     def create_client(database_name):
         conf = ConfigService()
-        config = conf.getconfig('reportconfigdb')
+        config = conf.getconfig(database_name)
         host = config['Host']
         port = config['Port']
         connection_string = f"mongodb://{host}:{port}/"
