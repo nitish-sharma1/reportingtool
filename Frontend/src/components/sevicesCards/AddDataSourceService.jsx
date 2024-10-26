@@ -1,12 +1,25 @@
-import React from 'react'
-import dog from '../../assets/dog.png'
+import React, { useEffect, useState } from 'react'
+
+
 
 function AddDataSourceService() {
+  const [data,setData] = useState(null)
+
+  useEffect(() => {
+    fetch(import.meta.env.VITE_ADD_DATASOURCE_ENDPOINT)
+    .then(response => response.json())
+    .then(json => setData(json))
+    .catch(error => console.error(error));
+  },[]);
+
+
+
   return (
     <div className='flex-grow flex justify-center items-center mt-20'>
       <div className='flex bg-white p-20 flex-col items-center justify-center rounded-md'>
      
         <h1 className="mb-4 text-2xl font-bold">Add A New Data Source</h1> 
+        
         <select className="block w-64 p-2 mb-4 border border-gray-300 bg-input rounded " required >
           <option value="">Select Data Source Type</option>
           <option value="mysql">MySQL</option>
