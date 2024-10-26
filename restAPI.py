@@ -10,6 +10,11 @@ app = Flask(__name__)
 CORS(app)
 
 
+@app.route('/api/v1/check-connection', methods=["GET"])
+def check_connection():
+    return {"msg": "connection successful"}
+
+
 @app.route('/api/v1/add-config', methods=["POST"])
 def add_config_to_mongo():
     schema = ConfigSchema()
