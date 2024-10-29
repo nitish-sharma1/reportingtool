@@ -3,6 +3,7 @@ import NavBar from './NavBar'
 import ConfigPageBody from './ConfigPageBody'
 import SideBar from './SideBar'
 import AddDataSourceService from './sevicesCards/AddDataSourceService'
+import AddNewOutboundService from './sevicesCards/AddNewOutboundService'
 
 function ConfigPage() {
   return (
@@ -11,7 +12,8 @@ function ConfigPage() {
         <div className='flex flex-grow'> 
         <SideBar></SideBar>
         {/* <ConfigPageBody></ConfigPageBody> */}
-        <AddDataSourceService></AddDataSourceService>
+        {/* <AddDataSourceService></AddDataSourceService> */}
+        <AddNewOutboundService></AddNewOutboundService>
         </div>
         
 
