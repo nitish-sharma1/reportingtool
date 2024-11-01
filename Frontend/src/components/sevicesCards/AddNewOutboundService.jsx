@@ -6,6 +6,7 @@ function AddNewOutboundService() {
         setSelectedOption(val)
 
     }
+    const [smtpDetails , setSmtpDetails] = useState('')
     
     return (
         <div className='flex-grow flex justify-center items-center mt-20'>
