@@ -4,6 +4,7 @@ import ConfigPageBody from './ConfigPageBody'
 import SideBar from './SideBar'
 import AddDataSourceService from './sevicesCards/AddDataSourceService'
 import AddNewOutboundService from './sevicesCards/AddNewOutboundService'
+import AddReportService from './sevicesCards/AddReportService'
 
 function ConfigPage() {
   return (
@@ -13,7 +14,8 @@ function ConfigPage() {
         <SideBar></SideBar>
         {/* <ConfigPageBody></ConfigPageBody> */}
         {/* <AddDataSourceService></AddDataSourceService> */}
-        <AddNewOutboundService></AddNewOutboundService>
+        {/* <AddNewOutboundService></AddNewOutboundService> */}
+        <AddReportService></AddReportService>
         </div>
         
 
