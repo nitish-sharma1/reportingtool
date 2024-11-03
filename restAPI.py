@@ -10,12 +10,21 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/api/v1/check-connection', methods=["GET"])
-def check_connection():
-    return {"msg": "connection successful"}
+@app.route('/api/v1/getinstancename', methods=["GET"])
+def get_instance_name():
+    client = MongoHelper().create_client('reportconfigdb')
+    mydb = client['reportconfigdb']
+    collection = mydb['datasource']
+    try:
+        instance_names = collection.distinct("instance_name")
+        return jsonify({"instance_names": instance_names})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        client.close()
 
 
-@app.route('/api/v1/add-config', methods=["POST"])
+@app.route('/api/v1/add-report', methods=["POST"])
 def add_config_to_mongo():
     schema = ConfigSchema()
     body = request.json
