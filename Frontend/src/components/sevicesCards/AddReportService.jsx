@@ -11,7 +11,7 @@ function AddReportService() {
   const [port , setPort] = useState('')
   useEffect(() => {
     if(btnState){
-    axios.post(import.meta.env.VITE_ADD_DATASOURCE_ENDPOINT,{
+    axios.post(import.meta.env.VITE_ADD_REPORT_ENDPOINT,{
       "datasource_type" : dataSourceName,
       "instance_name" : instanceName,
       "username" : username,
@@ -37,9 +37,15 @@ function AddReportService() {
       <div className='flex bg-white p-20 flex-col items-center justify-center rounded-md'>
      
         <h1 className="mb-4 text-2xl font-bold">Configure A New Report</h1> 
+        <input 
+          type="text" 
+          placeholder="Report Name" 
+          className="block w-96 p-2 mb-4 border border-gray-300 bg-input rounded" 
+          required  onChange={(e)=> setInstanceName(e.target.value)}
+        />
         
         <select className="block w-64 p-2 mb-4 border border-gray-300 bg-input rounded " required onChange={(e)=> setDataSource(e.target.value)} >
-          <option value="">Select Data Source Type</option>
+          <option value="">Select Instance Name</option>
           <option value="mysql">MySQL</option>
           <option value="postgresql">PostgreSQL</option>
           <option value="mssql">MsSQL</option>
