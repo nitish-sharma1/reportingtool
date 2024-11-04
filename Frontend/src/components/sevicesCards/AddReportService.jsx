@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react'
 
 function AddReportService() {
     const [btnState,setBtnState] = useState(false)
-  const [dataSourceName , setDataSource] = useState('')
+  const [reportName , setReportName] = useState('')
   const [instanceName , getInstanceName] = useState([])
-  const [username , setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [hostname,setHostname] = useState('')
-  const [port , setPort] = useState('')
+  const [instanceNameVal , setInstanceName] = useState('')
+  const [reportTime , setReportTime] = useState('')
+  const [query, setQuery] = useState('')
+  const [frequency, setFrequency] = useState('')
 
 
   useEffect(() => {axios.get(import.meta.env.VITE_GET_INSTANCE_ENDPOINT)
@@ -19,7 +19,7 @@ function AddReportService() {
         
 ).catch(error => {console.log(error)})},[])
 
-
+                                                                                                                                                                                                                                     
 
 
 
@@ -27,13 +27,14 @@ function AddReportService() {
   useEffect(() => {
     if(btnState){
     axios.post(import.meta.env.VITE_ADD_REPORT_ENDPOINT,{
-      "datasource_type" : dataSourceName,
-      "instance_name" : instanceName,
-      "username" : username,
-      "password" : password,
-      "hostname"  : hostname,
-      "port" : parseInt(port,10)
-  }).then(function (response) {
+        "database_type" : "mysql",
+        "instance_name" : instanceNameVal,
+        "report_time" : reportTime,
+        "frequency" : ["monday","tuesday","wednesday"],
+        "report_name" : reportName,
+        "query" : query,
+        "transfer_type" : "sftp"
+    }).then(function (response) {
     console.log(response);
   })
   .catch(function (error) {
@@ -57,10 +58,10 @@ function AddReportService() {
           type="text" 
           placeholder="Report Name" 
           className="block w-64 p-2 mb-4 border border-gray-300 bg-input rounded" 
-          required  onChange={(e)=> setInstanceName(e.target.value)}
+          required  onChange={(e)=> setReportName(e.target.value)}
         />
         
-        <select className="block w-64 p-2 mb-4 border border-gray-300  ml-2 bg-input rounded " required onChange={(e)=> setDataSource(e.target.value)} >
+        <select className="block w-64 p-2 mb-4 border border-gray-300  ml-2 bg-input rounded " required onChange={(e)=> setInstanceName(e.target.value)} >
           <option value="">Select Instance Name</option>
           {instanceName.map((name, index) => (
                     <option key={index} value={name}>{name}</option> // Using name as both value and display
@@ -72,13 +73,13 @@ function AddReportService() {
           type="text" 
           placeholder="Report Time" 
           className="block w-64 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
-          required  onChange={(e)=> setUsername(e.target.value)}
+          required  onChange={(e)=> setReportTime(e.target.value)}
         />
         <input 
           type="text" 
           placeholder="frequency" 
           className="block w-64 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
-          required  onChange={(e)=> setPassword(e.target.value)}
+          required  onChange={(e)=> setFrequency(e.target.value)}
         />
         </div>
         
@@ -88,7 +89,7 @@ function AddReportService() {
                 type="text" 
                 placeholder="Query" 
                 className="block w-full h-60 p-2 mb-4 m-2 border border-gray-300 bg-input rounded" 
-                required  onChange={(e)=> setHostname(e.target.value)}
+                required  onChange={(e)=> setQuery(e.target.value)}
                 />
         </label>
         

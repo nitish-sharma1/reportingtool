@@ -24,6 +24,19 @@ def get_instance_name():
         client.close()
 
 
+@app.route('/api/v1/getoutboundservice', methods=["GET"])
+def get_outbound_service_name():
+    client = MongoHelper().create_client('reportconfigdb')
+    mydb = client['reportconfigdb']
+    collection = mydb['outbound_service_config']
+    try:
+        service_name = collection.distinct("service_name")
+        return jsonify({"service_name": service_name})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        client.close()
+
 @app.route('/api/v1/add-report', methods=["POST"])
 def add_config_to_mongo():
     schema = ConfigSchema()
@@ -33,9 +46,9 @@ def add_config_to_mongo():
 
     except ValidationError as err:
         return jsonify(err.messages), 400  # Return validation errors
-    config_service = Report_config_service()
+
     try:
-        result = config_service.add_config(report_data)
+        result = MongoHelper().add_data_to_mongo_collection(report_data, 'reportconfigdb', 'reportconfigs')
         return {"msg": "added config successfully"}, 200
 
     except Exception as e:
