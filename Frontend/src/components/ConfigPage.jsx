@@ -14,8 +14,8 @@ function ConfigPage() {
         <SideBar></SideBar>
         {/* <ConfigPageBody></ConfigPageBody> */}
         {/* <AddDataSourceService></AddDataSourceService> */}
-        {/* <AddNewOutboundService></AddNewOutboundService> */}
-        <AddReportService></AddReportService>
+        <AddNewOutboundService></AddNewOutboundService>
+        {/* <AddReportService></AddReportService> */}
         </div>
         
 

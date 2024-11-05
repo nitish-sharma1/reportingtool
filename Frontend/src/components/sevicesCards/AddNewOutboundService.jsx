@@ -13,6 +13,13 @@ function AddNewOutboundService() {
           <div className='flex bg-white p-20 flex-col items-center justify-center rounded-md'>
          
             <h1 className="mb-4 text-2xl font-bold">Add New Outbound Service</h1> 
+            <input
+              type="text"
+              placeholder="Outbound Service Name"
+              className="block w-full p-2 mb-4 border border-gray-300 bg-input rounded"
+              required
+              onChange={(e) => setLoginEmail(e.target.value)}
+            />
             
             <select className="block w-64 p-2 mb-4 border border-gray-300 bg-input rounded " required  onChange={(e)=> handleOptionSelect(e.target.value)}  >
               <option value="">Type Of Outbound Service</option>
