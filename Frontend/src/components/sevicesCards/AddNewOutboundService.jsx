@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 function AddNewOutboundService() {
     const [selectedOption, setSelectedOption] = useState('');
@@ -15,17 +16,85 @@ function AddNewOutboundService() {
     const [sftpPassword, setSftpPassword] = useState('');
     const [remoteFilePath, setRemoteFilePath] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [btnStateSmtp,setBtnStateSmtp] = useState(false);
+    const [btnStateAws,setBtnStateAws] = useState(false);
+    const [btnStatemft,setBtnStatemft] = useState(false);
 
     const handleOptionSelect = (val) => {
         setSelectedOption(val);
         setErrorMessage(''); // Clear any existing error message
     };
+    useEffect(() => {
+        // handle post for smtp
+        if(btnStateSmtp){
+        axios.post(import.meta.env.VITE_ADD_OUTBOUNDSERVICE_ENDPOINT,{
+          "datasource_type" : "dataSourceName",
+          "instance_name" : "instanceName",
+          "username" : "username",
+          "password" : "password",
+          "hostname"  : "hostname",
+          "port" : 1234
+      }).then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      }
+      )}
+      setBtnStateSmtp(false)
+    }
+      ,[btnStateSmtp]);
+
+
+      useEffect(() => {
+        // handle post for aws
+        if(btnStateAws){
+        axios.post(import.meta.env.VITE_ADD_OUTBOUNDSERVICE_ENDPOINT,{
+          "datasource_type" : "dataSourceName",
+          "instance_name" : "instanceName",
+          "username" : "username",
+          "password" : "password",
+          "hostname"  : "hostname",
+          "port" : 1234
+      }).then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      }
+      )}
+      setBtnStateAws(false)
+    }
+      ,[btnStateAws]);
+
+      useEffect(() => {
+        // handle post for aws
+        if(btnStatemft){
+        axios.post(import.meta.env.VITE_ADD_OUTBOUNDSERVICE_ENDPOINT,{
+          "datasource_type" : "dataSourceName",
+          "instance_name" : "instanceName",
+          "username" : "username",
+          "password" : "password",
+          "hostname"  : "hostname",
+          "port" : 1234
+      }).then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      }
+      )}
+      setBtnStatemft(false)
+    }
+      ,[btnStatemft]);
+
 
     const handleSubmit = () => {
         if (!outboundServiceName) {
             setErrorMessage('Please provide an Outbound Service Name.');
             return;
         }
+       
 
         switch (selectedOption) {
             case 'smtp':
@@ -33,17 +102,29 @@ function AddNewOutboundService() {
                     setErrorMessage('Please fill in all SMTP details.');
                     return;
                 }
+                else{
+                    setBtnStateSmtp(btnStateSmtp+1);
+                      
+                }
                 break;
             case 'awss3':
                 if (!accessKey || !secretKey || !awsRegion) {
                     setErrorMessage('Please fill in all AWS S3 details.');
                     return;
                 }
+                else{
+                    setBtnStateAws(btnStateAws+1);
+                      
+                }
                 break;
             case 'sftp':
                 if (!sftpHostname || !sftpPort || !sftpUsername || !sftpPassword || !remoteFilePath) {
                     setErrorMessage('Please fill in all SFTP details.');
                     return;
+                }
+                else{
+                    setBtnStatemft(btnStatemft+1);
+                      
                 }
                 break;
             default:
