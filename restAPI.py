@@ -66,7 +66,24 @@ def add_data_source():
         return jsonify(err.messages), 400  # Return validation errors
     try:
         result = MongoHelper().add_data_to_mongo_collection(data_source_parsed_json, 'reportconfigdb', 'datasource')
-        return {"msg": "sent succesful"}, 200
+        return {"msg": "sent successful"}, 200
+
+    except Exception as e:
+        return {"msg": "somthing went wrong", "exception": e}, 500
+
+
+@app.route('/api/v1/add-outbound-service', methods=["POST"])
+def add_outbound_service():
+    schema = DataSourceSchema()
+    body = request.json
+    try:
+        data_source_parsed_json = schema.load(body)
+
+    except ValidationError as err:
+        return jsonify(err.messages), 400  # Return validation errors
+    try:
+        result = MongoHelper().add_data_to_mongo_collection(data_source_parsed_json, 'reportconfigdb', 'outbound_services')
+        return {"msg": "sent successful"}, 200
 
     except Exception as e:
         return {"msg": "somthing went wrong", "exception": e}, 500
