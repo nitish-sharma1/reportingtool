@@ -28,12 +28,11 @@ function AddNewOutboundService() {
         // handle post for smtp
         if(btnStateSmtp){
         axios.post(import.meta.env.VITE_ADD_OUTBOUNDSERVICE_ENDPOINT,{
-          "datasource_type" : "dataSourceName",
-          "instance_name" : "instanceName",
-          "username" : "username",
-          "password" : "password",
-          "hostname"  : "hostname",
-          "port" : 1234
+            "outbound_service_name" : outboundServiceName,
+            "outbound_service_type" : selectedOption,
+            "smtp_server" : smtpServer,
+            "app_password" : appPassword,
+            "login_email" : loginEmail
       }).then(function (response) {
         console.log(response);
       })
@@ -50,12 +49,11 @@ function AddNewOutboundService() {
         // handle post for aws
         if(btnStateAws){
         axios.post(import.meta.env.VITE_ADD_OUTBOUNDSERVICE_ENDPOINT,{
-          "datasource_type" : "dataSourceName",
-          "instance_name" : "instanceName",
-          "username" : "username",
-          "password" : "password",
-          "hostname"  : "hostname",
-          "port" : 1234
+            "outbound_service_name" : outboundServiceName,
+            "outbound_service_type" : selectedOption,
+            "access_key" : accessKey,
+            "secret_key" : secretKey,
+            "aws_region" : awsRegion
       }).then(function (response) {
         console.log(response);
       })
@@ -71,12 +69,13 @@ function AddNewOutboundService() {
         // handle post for aws
         if(btnStatemft){
         axios.post(import.meta.env.VITE_ADD_OUTBOUNDSERVICE_ENDPOINT,{
-          "datasource_type" : "dataSourceName",
-          "instance_name" : "instanceName",
-          "username" : "username",
-          "password" : "password",
-          "hostname"  : "hostname",
-          "port" : 1234
+            "outbound_service_name" : outboundServiceName,
+            "outbound_service_type" : selectedOption,
+            "sftp_host" : sftpHostname,
+            "sftp_port" : parseInt(sftpPort,10),
+            "sftp_username" : sftpUsername,
+            "sftp_password" : sftpPassword,
+            "remote_file_path" : remoteFilePath
       }).then(function (response) {
         console.log(response);
       })

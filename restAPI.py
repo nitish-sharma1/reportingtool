@@ -3,6 +3,7 @@ from flask_cors import CORS
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
 from Schema.datasourceschema import DataSourceSchema
+from Schema.outboundServicesSchema import OutboundServiceAWS, OutboundServiceMFT, OutboundServiceSMTP
 from marshmallow import ValidationError
 from services.MongoHelperService.mongohelperservice import MongoHelper
 
@@ -36,6 +37,7 @@ def get_outbound_service_name():
         return jsonify({"error": str(e)}), 500
     finally:
         client.close()
+
 
 @app.route('/api/v1/add-report', methods=["POST"])
 def add_config_to_mongo():
@@ -74,15 +76,24 @@ def add_data_source():
 
 @app.route('/api/v1/add-outbound-service', methods=["POST"])
 def add_outbound_service():
-    schema = DataSourceSchema()
+    global schema
     body = request.json
+
     try:
+        outbound_service_type = body["outbound_service_type"]
+        if outbound_service_type == "smtp":
+            schema = OutboundServiceSMTP()
+        elif outbound_service_type == "awss3":
+            schema = OutboundServiceAWS()
+        elif outbound_service_type == "sftp":
+            schema = OutboundServiceMFT()
         data_source_parsed_json = schema.load(body)
 
     except ValidationError as err:
         return jsonify(err.messages), 400  # Return validation errors
     try:
-        result = MongoHelper().add_data_to_mongo_collection(data_source_parsed_json, 'reportconfigdb', 'outbound_services')
+        result = MongoHelper().add_data_to_mongo_collection(data_source_parsed_json, 'reportconfigdb',
+                                                            'outbound_services')
         return {"msg": "sent successful"}, 200
 
     except Exception as e:
