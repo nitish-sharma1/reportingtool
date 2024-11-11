@@ -10,9 +10,10 @@ export default {
       'bg-grey': '#D9D9D9',
       'white': '#ffffff',
       'off-white': '#FFF8F8',
-      'input': '#F1EEEE',
+      'input': '#ffffff',
       'btn-purple': '#5e17eb',
-      'grey-dark': '#585656'
+      'grey-dark': '#585656',
+      'grey' : '#e5e7eb'
     }
   },
   plugins: [],
