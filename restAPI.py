@@ -29,9 +29,9 @@ def get_instance_name():
 def get_outbound_service_name():
     client = MongoHelper().create_client('reportconfigdb')
     mydb = client['reportconfigdb']
-    collection = mydb['outbound_service_config']
+    collection = mydb['outbound_services']
     try:
-        service_name = collection.distinct("service_name")
+        service_name = collection.distinct("outbound_service_name")
         return jsonify({"service_name": service_name})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
