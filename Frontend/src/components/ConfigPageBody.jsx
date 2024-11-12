@@ -1,18 +1,18 @@
-import React from 'react'
-import ServiceCards from './sevicesCards/ServiceCards'
-import datasource from '../assets/datasource.jpg'
-import report from '../assets/report.svg'
-import cloudStorage from '../assets/cloudstorage.png'
+// ConfigPageBody.js
+import React from 'react';
+import ServiceCards from './sevicesCards/ServiceCards';
+import datasource from '../assets/datasource.jpg';
+import report from '../assets/report.svg';
+import cloudStorage from '../assets/cloudstorage.png';
 
-function ConfigPageBody() {
+function ConfigPageBody({ onSelectService }) {
   return (
-    <div className='flex-grow bg-gray-200 flex justify-center  items-center p-4 cursor-pointer '>
-        <ServiceCards imgsrc={datasource} msg="Add New Data Source"></ServiceCards>
-        <ServiceCards imgsrc={report} msg="Schedule new report" ></ServiceCards>
-        <ServiceCards imgsrc={cloudStorage} msg="Configure new SFTP / MFT / Mail-server"></ServiceCards>
+    <div className='flex-grow bg-gray-200 flex justify-center items-center p-4 cursor-pointer'>
+        <ServiceCards imgsrc={datasource} msg="Add New Data Source" onClick={() => onSelectService('dataSource')} />
+        <ServiceCards imgsrc={report} msg="Schedule new report" onClick={() => onSelectService('report')} />
+        <ServiceCards imgsrc={cloudStorage} msg="Configure new SFTP / MFT / Mail-server" onClick={() => onSelectService('cloudStorage')} />
     </div>
-
-  )
+  );
 }
 
-export default ConfigPageBody
+export default ConfigPageBody;
