@@ -6,6 +6,7 @@ import SideBar from './SideBar';
 import AddDataSourceService from './sevicesCards/AddDataSourceService';
 import AddNewOutboundService from './sevicesCards/AddNewOutboundService';
 import AddReportService from './sevicesCards/AddReportService';
+import BackButton from './sevicesCards/BackButton';
 
 function ConfigPage() {
   const [selectedService, setSelectedService] = useState(null);
@@ -28,6 +29,7 @@ function ConfigPage() {
       <NavBar />
       <div className='flex flex-grow'> 
         <SideBar />
+        {selectedService && <BackButton onSelectService={setSelectedService} />}
         {renderServiceComponent()}
       </div>
     </div>
