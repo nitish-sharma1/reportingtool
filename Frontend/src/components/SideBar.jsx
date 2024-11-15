@@ -3,21 +3,11 @@ import { IoSettings } from "react-icons/io5";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { IoMdAnalytics } from "react-icons/io";
 import sidebarBottom from "../assets/sidebarbottom.gif";
+import YourReportsBody from './YourReportsBody';
 import { BrowserRouter as Router, NavLink, Route, Routes } from "react-router-dom";
 
-function Configurator() {
-  return <div>Configurator Page</div>;
-}
 
-function Reports() {
-  return <div>Your Reports Page</div>;
-}
-
-function AIAnalysis() {
-  return <div>AI Analysis Page</div>;
-}
-
-function SideBar() {
+function SideBar({ onSelectService }) {
   return (
     <Router>
       <div className="w-64 bg-white text-btn-purple h-full flex flex-col">
@@ -31,6 +21,7 @@ function SideBar() {
                     isActive ? "bg-btn-purple text-white" : "hover:bg-gray-700"
                   }`
                 }
+                onClick={() => onSelectService(null)}
               >
                 <IoSettings className="mr-1" /> Configurator
               </NavLink>
@@ -43,6 +34,7 @@ function SideBar() {
                     isActive ? "bg-btn-purple text-white" : "hover:bg-gray-700"
                   }`
                 }
+                onClick={() => onSelectService('reportspage')}
               >
                 <SiMicrosoftexcel className="mr-1" /> Your Reports
               </NavLink>
@@ -55,6 +47,7 @@ function SideBar() {
                     isActive ? "bg-btn-purple text-white" : "hover:bg-gray-700"
                   }`
                 }
+                onClick={() => onSelectService('aianalysispage')}
               >
                 <IoMdAnalytics className="mr-1" /> AI Analysis
               </NavLink>
@@ -67,9 +60,9 @@ function SideBar() {
 
         {/* Define Routes */}
         <Routes>
-          <Route path="/configurator" element={<Configurator />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/analysis" element={<AIAnalysis />} />
+          <Route path="/configurator" />
+          <Route path="/reports"/>
+          <Route path="/analysis"  />
         </Routes>
       </div>
     </Router>

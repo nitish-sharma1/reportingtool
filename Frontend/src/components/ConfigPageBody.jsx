@@ -7,7 +7,7 @@ import cloudStorage from '../assets/cloudstorage.png';
 
 function ConfigPageBody({ onSelectService }) {
   return (
-    <div className='flex-grow bg-gray-200 flex justify-center items-center p-4 cursor-pointer'>
+    <div className='flex-grow bg-gray-200 flex justify-center items-center p-4 '>
         <ServiceCards imgsrc={datasource} msg="Add New Data Source" onClick={() => onSelectService('dataSource')} />
         <ServiceCards imgsrc={report} msg="Schedule new report" onClick={() => onSelectService('report')} />
         <ServiceCards imgsrc={cloudStorage} msg="Configure new SFTP / MFT / Mail-server" onClick={() => onSelectService('cloudStorage')} />
