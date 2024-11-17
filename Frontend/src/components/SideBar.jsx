@@ -18,7 +18,7 @@ function SideBar({ onSelectService }) {
                 to="/configurator"
                 className={({ isActive }) =>
                   `flex items-center justify-center p-2 rounded-full ${
-                    isActive ? "bg-btn-purple text-white" : "hover:bg-gray-700"
+                    isActive ? "bg-btn-purple text-white" : "hover:bg-gray-100"
                   }`
                 }
                 onClick={() => onSelectService(null)}
@@ -31,7 +31,7 @@ function SideBar({ onSelectService }) {
                 to="/reports"
                 className={({ isActive }) =>
                   `flex items-center justify-center p-2 rounded-full ${
-                    isActive ? "bg-btn-purple text-white" : "hover:bg-gray-700"
+                    isActive ? "bg-btn-purple text-white" : "hover:bg-gray-100"
                   }`
                 }
                 onClick={() => onSelectService('reportspage')}
@@ -44,7 +44,7 @@ function SideBar({ onSelectService }) {
                 to="/analysis"
                 className={({ isActive }) =>
                   `flex items-center justify-center p-2 rounded-full ${
-                    isActive ? "bg-btn-purple text-white" : "hover:bg-gray-700"
+                    isActive ? "bg-btn-purple text-white" : "hover:bg-gray-100"
                   }`
                 }
                 onClick={() => onSelectService('aianalysispage')}
