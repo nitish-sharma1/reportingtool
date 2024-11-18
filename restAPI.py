@@ -6,6 +6,7 @@ from Schema.datasourceschema import DataSourceSchema
 from Schema.outboundServicesSchema import OutboundServiceAWS, OutboundServiceMFT, OutboundServiceSMTP
 from marshmallow import ValidationError
 from services.MongoHelperService.mongohelperservice import MongoHelper
+from bson.json_util import dumps, loads
 
 app = Flask(__name__)
 CORS(app)
@@ -99,6 +100,23 @@ def add_outbound_service():
     except Exception as e:
         return {"msg": "somthing went wrong", "exception": e}, 500
 
+
+@app.route('/api/v1/get-report-data', methods=["GET"])
+def get_report_data():
+    try:
+        # Create MongoDB client and connect to the database
+        with MongoHelper().create_client('reportconfigdb') as client:
+            mydb = client['reportconfigdb']
+            collection = mydb['reportconfigs']
+
+            # Fetch and serialize the reports
+            reports = list(collection.find())  # Convert cursor to a list
+            serialized_reports = dumps(reports)  # Serialize BSON to JSON
+
+            # Return the serialized data directly
+            return app.response_class(serialized_reports, content_type='application/json')
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run()
