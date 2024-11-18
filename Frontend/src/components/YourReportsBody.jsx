@@ -1,125 +1,122 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function YourReportsBody() {
+  const [reports, setReports] = useState([]); // State to hold the reports data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  useEffect(() => {
+    axios
+      .get(import.meta.env.VITE_GET_All_REPORTS)
+      .then((response) => {
+        const reportData = response.data; // Directly use the response as it is an array
+        if (Array.isArray(reportData)) {
+          setReports(reportData); // Set the fetched data
+        } else {
+          throw new Error('Invalid data format');
+        }
+      })
+      .catch((err) => {
+        setError(err.message); // Handle errors
+      })
+      .finally(() => {
+        setLoading(false); // End loading
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex-grow flex justify-center items-center mt-20">
+        <div className="text-lg font-bold text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-grow flex justify-center items-center mt-20">
+        <div className="text-lg font-bold text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className='flex-grow flex justify-center items-center mt-20'>
-      <div className='flex bg-white p-20 flex-col items-center justify-center rounded-md'>
-       <h1 className='mb-8 text-btn-purple text-2xl font-extrabold leading-none tracking-tight '>Your Scheduled Reports</h1>
+    <div className="flex-grow flex justify-center  ">
+      <div className="flex bg-transparent p-20 flex-col items-center  rounded-md">
+        <h1 className="mb-8 text-btn-purple text-2xl font-extrabold leading-none tracking-tight">
+          Your Scheduled Reports
+        </h1>
 
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs uppercase bg-btn-purple  text-white">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    Product name
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs uppercase bg-btn-purple text-white">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Report ID
                 </th>
-                <th scope="col" class="px-6 py-3">
-                    Color
+                <th scope="col" className="px-6 py-3">
+                  Report Name
                 </th>
-                <th scope="col" class="px-6 py-3">
-                    Category
+                <th scope="col" className="px-6 py-3">
+                  Instance Name
                 </th>
-                <th scope="col" class="px-6 py-3">
-                    Price
+                <th scope="col" className="px-6 py-3">
+                  Report Time
                 </th>
-                <th scope="col" class="px-6 py-3">
-                    Action
+                <th scope="col" className="px-6 py-3">
+                  Frequency
                 </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Apple MacBook Pro 17"
+                <th scope="col" className="px-6 py-3">
+                  Query
                 </th>
-                <td class="px-6 py-4">
-                    Silver
-                </td>
-                <td class="px-6 py-4">
-                    Laptop
-                </td>
-                <td class="px-6 py-4">
-                    $2999
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Microsoft Surface Pro
+                <th scope="col" className="px-6 py-3">
+                  Outbound Service
                 </th>
-                <td class="px-6 py-4">
-                    White
-                </td>
-                <td class="px-6 py-4">
-                    Laptop PC
-                </td>
-                <td class="px-6 py-4">
-                    $1999
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Magic Mouse 2
+                <th scope="col" className="px-6 py-3">
+                  Action
                 </th>
-                <td class="px-6 py-4">
-                    Black
-                </td>
-                <td class="px-6 py-4">
-                    Accessories
-                </td>
-                <td class="px-6 py-4">
-                    $99
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Google Pixel Phone
-                </th>
-                <td class="px-6 py-4">
-                    Gray
-                </td>
-                <td class="px-6 py-4">
-                    Phone
-                </td>
-                <td class="px-6 py-4">
-                    $799
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Apple Watch 5
-                </th>
-                <td class="px-6 py-4">
-                    Red
-                </td>
-                <td class="px-6 py-4">
-                    Wearables
-                </td>
-                <td class="px-6 py-4">
-                    $999
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
+              </tr>
+            </thead>
+            <tbody>
+              {reports.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-4 text-gray-500">
+                    No reports available.
+                  </td>
+                </tr>
+              ) : (
+                reports.map((report, index) => (
+                  <tr
+                    key={index}
+                    className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+                  >
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {report._id?.$oid || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4">{report.report_name}</td>
+                    <td className="px-6 py-4">{report.instance_name}</td>
+                    <td className="px-6 py-4">{report.report_time}</td>
+                    <td className="px-6 py-4">{report.frequency?.join(', ') || 'N/A'}</td>
+                    <td className="px-6 py-4">{report.query}</td>
+                    <td className="px-6 py-4">{report.outbound_service_name || 'N/A'}</td>
+                    <td className="px-6 py-4">
+                      <a
+                        href="#"
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      >
+                        Edit
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    </div>
-  )
+  );
 }
 
-export default YourReportsBody
+export default YourReportsBody;
