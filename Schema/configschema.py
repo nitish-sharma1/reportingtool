@@ -11,6 +11,7 @@ class ConfigSchema(Schema):
     subject = fields.Str(required=False)
     email_body = fields.Str(required=False)
     outbound_service_name = fields.Str(required=True)
+    isEnabled = fields.Bool(required=True)
 
     class Meta:
         strict = True

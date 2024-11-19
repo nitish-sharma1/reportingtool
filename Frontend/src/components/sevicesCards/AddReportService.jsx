@@ -71,7 +71,8 @@ useEffect(() => {
         "frequency" : frequency,
         "report_name" : reportName,
         "query" : query,
-        "outbound_service_name" : outboundServiceNameVal
+        "outbound_service_name" : outboundServiceNameVal,
+        "isEnabled" : true
     }).then(function (response) {
     console.log(response);
   })

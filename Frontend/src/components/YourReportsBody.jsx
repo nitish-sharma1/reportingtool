@@ -74,7 +74,7 @@ function YourReportsBody() {
                   Outbound Service
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Action
+                  Report Status
                 </th>
               </tr>
             </thead>
@@ -100,12 +100,13 @@ function YourReportsBody() {
                     <td className="px-6 py-4">{report.frequency?.join(', ') || 'N/A'}</td>
                     <td className="px-6 py-4">{report.query}</td>
                     <td className="px-6 py-4">{report.outbound_service_name || 'N/A'}</td>
+                    
                     <td className="px-6 py-4">
                       <a
                         href="#"
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
-                        Edit
+                        {  (report.isEnabled) ? "Enabled" : "Disabled"}
                       </a>
                     </td>
                   </tr>
