@@ -7,6 +7,7 @@ from Schema.outboundServicesSchema import OutboundServiceAWS, OutboundServiceMFT
 from marshmallow import ValidationError
 from services.MongoHelperService.mongohelperservice import MongoHelper
 from bson.json_util import dumps, loads
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 CORS(app)
@@ -117,6 +118,40 @@ def get_report_data():
             return app.response_class(serialized_reports, content_type='application/json')
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/v1/change-report-status/<string:idd>', methods=["PUT"])
+def change_report_status(idd):
+    try:
+        with MongoHelper().create_client('reportconfigdb') as client:
+            mydb = client['reportconfigdb']
+            collection = mydb['reportconfigs']
+
+            # Validate ObjectId
+            if not ObjectId.is_valid(idd):
+                return jsonify({"error": "Invalid ID format"}), 400
+
+            result = collection.find_one_and_update(
+                {"_id": ObjectId(idd)},
+                [{"$set": {"isEnabled": {"$not": "$isEnabled"}}}],  # set isEnabled = !isEnabled
+                return_document=True
+            )
+
+            if result is None:
+                return jsonify({"error": "Document not found"}), 404
+
+            return jsonify({
+                "message": "Status updated successfully",
+                "document": {
+                    "_id": str(result["_id"]),
+                    "isEnabled": result["isEnabled"]
+                }
+            }), 200
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
 
 if __name__ == '__main__':
     app.run()
