@@ -5,7 +5,32 @@ function YourReportsBody() {
   const [reports, setReports] = useState([]); // State to hold the reports data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  // Function to handle PUT call
+  const handleUpdateReportStatus = (reportId) => {
 
+    const url = `http://localhost:5000/api/v1/change-report-status/${reportId}`;
+
+    axios
+      .put(url)
+      .then((res) => {
+        console.log('Report status updated:', res.data);
+        // Optionally, update the specific report status in the `reports` state
+        setReports((prevReports) =>
+          prevReports.map((report) =>
+            report._id?.$oid === reportId
+              ? { ...report, isEnabled: !report.isEnabled }
+              : report
+          )
+        );
+      })
+      .catch((err) => {
+        console.error('Error updating report status:', err.message);
+        setError(`Failed to update report: ${err.message}`);
+      })
+    
+  };
+
+  // Fetch all reports on mount
   useEffect(() => {
     axios
       .get(import.meta.env.VITE_GET_All_REPORTS)
@@ -42,8 +67,8 @@ function YourReportsBody() {
   }
 
   return (
-    <div className="flex-grow flex justify-center  ">
-      <div className="flex bg-transparent p-20 flex-col items-center  rounded-md">
+    <div className="flex-grow flex justify-center">
+      <div className="flex bg-transparent p-20 flex-col items-center rounded-md">
         <h1 className="mb-8 text-btn-purple text-2xl font-extrabold leading-none tracking-tight">
           Your Scheduled Reports
         </h1>
@@ -52,9 +77,7 @@ function YourReportsBody() {
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs uppercase bg-btn-purple text-white">
               <tr>
-                <th scope="col" className="px-6 py-3">
-                  Report ID
-                </th>
+                
                 <th scope="col" className="px-6 py-3">
                   Report Name
                 </th>
@@ -91,23 +114,23 @@ function YourReportsBody() {
                     key={index}
                     className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {report._id?.$oid || 'N/A'}
-                    </td>
+                    
                     <td className="px-6 py-4">{report.report_name}</td>
                     <td className="px-6 py-4">{report.instance_name}</td>
                     <td className="px-6 py-4">{report.report_time}</td>
                     <td className="px-6 py-4">{report.frequency?.join(', ') || 'N/A'}</td>
                     <td className="px-6 py-4">{report.query}</td>
                     <td className="px-6 py-4">{report.outbound_service_name || 'N/A'}</td>
-                    
                     <td className="px-6 py-4">
-                      <a
-                        href="#"
+                      <button
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        onClick={() => handleUpdateReportStatus(report._id?.$oid || '')}
+                       
                       >
-                        {  (report.isEnabled) ? "Enabled" : "Disabled"}
-                      </a>
+                        { report.isEnabled
+                          ? 'Enabled'
+                          : 'Disabled'}
+                      </button>
                     </td>
                   </tr>
                 ))
