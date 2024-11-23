@@ -91,9 +91,6 @@ function YourReportsBody() {
                   Frequency
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Query
-                </th>
-                <th scope="col" className="px-6 py-3">
                   Outbound Service
                 </th>
                 <th scope="col" className="px-6 py-3">
@@ -119,7 +116,6 @@ function YourReportsBody() {
                     <td className="px-6 py-4">{report.instance_name}</td>
                     <td className="px-6 py-4">{report.report_time}</td>
                     <td className="px-6 py-4">{report.frequency?.join(', ') || 'N/A'}</td>
-                    <td className="px-6 py-4">{report.query}</td>
                     <td className="px-6 py-4">{report.outbound_service_name || 'N/A'}</td>
                     <td className="px-6 py-4">
                       <button

@@ -9,11 +9,12 @@ import ConfigPage from './components/ConfigPage'
 function App() {
   
   const [count, setCount] = useState(0)
+  const [isLoggedIn , setLogin] = useState(false)
 
   return (
     <>
-    {/* <LoginPage></LoginPage> */}
-    <ConfigPage></ConfigPage>
+    {isLoggedIn ? <ConfigPage></ConfigPage> : <LoginPage></LoginPage>}
+    
     </>
   )
 }
