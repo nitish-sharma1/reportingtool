@@ -1,8 +1,10 @@
 import React from 'react';
+import femodel from '../assets/signup.jpg';
 
 function SignUpForm({ setSignUpStatus }) {
   return (
-    <div>
+    <div className='flex w-full justify-between items-center'>
+        <div className="p-10 w-1/2">
       <input
         type="text"
         placeholder="Username"
@@ -30,6 +32,14 @@ function SignUpForm({ setSignUpStatus }) {
           Login
         </button>
       </p>
+      </div>
+      <div className="p-10">
+        <img
+          src={femodel}
+          alt="Female Model"
+          className="w-80 h-auto object-cover mix-blend-multiply"
+        />
+      </div>
     </div>
   );
 }
