@@ -8,6 +8,7 @@ from marshmallow import ValidationError
 from services.MongoHelperService.mongohelperservice import MongoHelper
 from bson.json_util import dumps, loads
 from bson.objectid import ObjectId
+from Schema.userschema import UserSchema
 
 app = Flask(__name__)
 CORS(app)
@@ -151,6 +152,18 @@ def change_report_status(idd):
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route('/api/v1/signup', methods=['POST'])
+def sign_up():
+    user_schema = UserSchema()
+    data = request.get_json()
+
+    # Validate user input
+    errors = user_schema.validate(data)
+    if errors:
+        return jsonify({"errors": errors}), 400
+    return jsonify({'msg': "user Created"})
 
 
 if __name__ == '__main__':
