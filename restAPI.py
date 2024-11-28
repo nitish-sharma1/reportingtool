@@ -157,13 +157,41 @@ def change_report_status(idd):
 @app.route('/api/v1/signup', methods=['POST'])
 def sign_up():
     user_schema = UserSchema()
-    data = request.get_json()
 
-    # Validate user input
-    errors = user_schema.validate(data)
-    if errors:
-        return jsonify({"errors": errors}), 400
-    return jsonify({'msg': "user Created"})
+    try:
+        # Parse and validate input data
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request payload is empty"}), 400
+
+        # Validate and deserialize input data
+        user_data = user_schema.load(data)
+
+        # Check if user already exists (assuming `find_data_in_mongo_collection` is implemented)
+        existing_user = MongoHelper().get_data_from_mongo(
+            {"email": user_data["email"]},
+            'reportconfigdb',
+            'users'
+        )
+        if existing_user:
+            return jsonify({"error": "User with this email already exists"}), 400
+
+        # Add the user to the database
+        MongoHelper().add_data_to_mongo_collection(
+            user_data,
+            'reportconfigdb',
+            'users'
+        )
+        return jsonify({"msg": "User created successfully"}), 201
+
+    except ValidationError as e:
+        # Handle validation errors
+        return jsonify({"errors": e.messages}), 400
+
+    except Exception as e:
+        # Log the error for debugging (optional)
+        print(f"Exception occurred: {e}")
+        return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
 
 
 if __name__ == '__main__':
