@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
+from flask_jwt_extended import JWTManager, create_access_token
+from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
 from Schema.datasourceschema import DataSourceSchema
@@ -9,8 +12,16 @@ from services.MongoHelperService.mongohelperservice import MongoHelper
 from bson.json_util import dumps, loads
 from bson.objectid import ObjectId
 from Schema.userschema import UserSchema
+import datetime
+
+
+load_dotenv()  #laod the env variables
+
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')  # Load JWT secret key from .env
+app.config['ENV'] = os.getenv('FLASK_ENV', 'production')  # Optional: Load Flask environment (default to 'production')
+jwt = JWTManager(app)
 CORS(app)
 
 
@@ -167,31 +178,43 @@ def sign_up():
         # Validate and deserialize input data
         user_data = user_schema.load(data)
 
-        # Check if user already exists (assuming `find_data_in_mongo_collection` is implemented)
-        existing_user = MongoHelper().get_data_from_mongo(
+        # Check if a user with the given email already exists
+        cursor = MongoHelper().get_data_from_mongo(
             {"email": user_data["email"]},
             'reportconfigdb',
             'users'
         )
-        if existing_user:
+
+        # Convert cursor to a list to check for existing users
+        existing_users = list(cursor)
+        print(f"Existing users: {existing_users}")  # Debugging output
+        if existing_users:
             return jsonify({"error": "User with this email already exists"}), 400
 
-        # Add the user to the database
+        # Generate the JWT token BEFORE inserting the user
+        try:
+            access_token = create_access_token(
+                identity=user_data["email"],
+                expires_delta=datetime.timedelta(hours=1)
+            )
+        except Exception as jwt_error:
+            return jsonify({"error": "Failed to generate JWT token", "details": str(jwt_error)}), 500
+
+        # Add the user to the database ONLY if JWT generation succeeds
         MongoHelper().add_data_to_mongo_collection(
             user_data,
             'reportconfigdb',
             'users'
         )
-        return jsonify({"msg": "User created successfully"}), 201
+
+        return jsonify({"msg": "User created successfully", "access_token": access_token}), 201
 
     except ValidationError as e:
-        # Handle validation errors
         return jsonify({"errors": e.messages}), 400
 
     except Exception as e:
-        # Log the error for debugging (optional)
-        print(f"Exception occurred: {e}")
         return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
+
 
 
 if __name__ == '__main__':
