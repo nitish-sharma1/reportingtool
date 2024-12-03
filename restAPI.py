@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,make_response
 from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager, create_access_token
@@ -216,6 +216,26 @@ def sign_up():
         return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
 
 
+@app.route('/api/v1/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    # Perform user authentication here
+    if email == "test@example.com" and password == "password":
+        access_token = create_access_token(identity=email, expires_delta=datetime.timedelta(hours=1))
+        response = make_response(jsonify({"msg": "Login successful"}))
+        response.set_cookie(
+            'jwt',
+            access_token,
+            httponly=True,
+            secure=True,
+            samesite='Strict'
+        )
+        return response
+
+    return jsonify({"msg": "Invalid credentials"}), 401
 
 if __name__ == '__main__':
     app.run()
