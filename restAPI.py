@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
 from Schema.datasourceschema import DataSourceSchema
+from Schema.loginschema import LoginSchema
 from Schema.outboundServicesSchema import OutboundServiceAWS, OutboundServiceMFT, OutboundServiceSMTP
 from marshmallow import ValidationError
 from services.MongoHelperService.mongohelperservice import MongoHelper
@@ -218,7 +219,9 @@ def sign_up():
 
 @app.route('/api/v1/login', methods=['POST'])
 def login():
+    login_schema = LoginSchema()
     data = request.get_json()
+    data = login_schema.load(data)
     email = data.get('email')
     password = data.get('password')
 
