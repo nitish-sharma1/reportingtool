@@ -1,3 +1,4 @@
+import bcrypt
 from flask import Flask, request, jsonify,make_response
 from flask_cors import CORS
 import os
@@ -14,6 +15,7 @@ from bson.json_util import dumps, loads
 from bson.objectid import ObjectId
 from Schema.userschema import UserSchema
 import datetime
+from werkzeug.security import check_password_hash,generate_password_hash
 
 
 load_dotenv()  #laod the env variables
@@ -185,11 +187,16 @@ def sign_up():
             'reportconfigdb',
             'users'
         )
-
         # Convert cursor to a list to check for existing users
         existing_users = list(cursor)
         if existing_users:
             return jsonify({"error": "User with this email already exists"}), 400
+
+        # Hash the password using bcrypt
+        hashed_password = bcrypt.hashpw(
+            user_data["password"].encode('utf-8'), bcrypt.gensalt()
+        )
+        user_data["password"] = hashed_password.decode('utf-8')  # Store as a string
 
         # Generate the JWT token BEFORE inserting the user
         try:
@@ -229,25 +236,55 @@ def sign_up():
 @app.route('/api/v1/login', methods=['POST'])
 def login():
     login_schema = LoginSchema()
-    data = request.get_json()
-    data = login_schema.load(data)
-    username = data.get('username')
-    password = data.get('password')
 
-    # Perform user authentication here
-    if username == "test@example.com" and password == "password":
+    try:
+        # Parse and validate input data
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request payload is empty"}), 400
+
+        # Validate and deserialize input data
+        login_data = login_schema.load(data)
+        username = login_data.get('username')
+        password = login_data.get('password')
+
+        # Fetch user data from MongoDB
+        user_cursor = MongoHelper().get_data_from_mongo(
+            {"email": username},  # Assuming 'email' is the username field
+            'reportconfigdb',
+            'users'
+        )
+        user_data = list(user_cursor)
+
+        # Check if user exists
+        if not user_data:
+            return jsonify({"msg": "Invalid credentials"}), 401
+
+        # Validate password
+        user = user_data[0]
+        stored_password_hash = user.get('password')  # Assuming password is hashed
+        if not stored_password_hash or not check_password_hash(stored_password_hash, password):
+            return jsonify({"msg": "Invalid credentials"}), 401
+
+        # Generate JWT token
         access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(hours=1))
+
+        # Set the token in an HTTP-only cookie
         response = make_response(jsonify({"msg": "Login successful"}))
         response.set_cookie(
             'jwt',
             access_token,
             httponly=True,
-            secure=True,
-            samesite='Strict'
+            secure=False,  # Set to True in production with HTTPS
+            samesite='Lax'  # Adjust based on your requirements
         )
         return response
 
-    return jsonify({"msg": "Invalid credentials"}), 401
+    except ValidationError as e:
+        return jsonify({"errors": e.messages}), 400
+
+    except Exception as e:
+        return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
 
 if __name__ == '__main__':
     app.run()
