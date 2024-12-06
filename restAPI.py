@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')  # Load JWT secret key from .env
 app.config['ENV'] = os.getenv('FLASK_ENV', 'production')  # Optional: Load Flask environment (default to 'production')
 jwt = JWTManager(app)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 
 @app.route('/api/v1/getinstancename', methods=["GET"])
@@ -188,7 +188,6 @@ def sign_up():
 
         # Convert cursor to a list to check for existing users
         existing_users = list(cursor)
-        print(f"Existing users: {existing_users}")  # Debugging output
         if existing_users:
             return jsonify({"error": "User with this email already exists"}), 400
 
@@ -208,7 +207,17 @@ def sign_up():
             'users'
         )
 
-        return jsonify({"msg": "User created successfully", "access_token": access_token}), 201
+        # Create a response and set the JWT token as an HTTP-only cookie
+        response = make_response(jsonify({"msg": "User created successfully"}), 201)
+        response.set_cookie(
+            "jwt",  # Cookie name
+            access_token,  # Cookie value
+            httponly=True,  # Prevent access via JavaScript
+            secure=True,  # Only send over HTTPS (set True in production)
+            samesite='Strict',  # CSRF protection
+            max_age=3600  # Cookie expiration in seconds (1 hour)
+        )
+        return response
 
     except ValidationError as e:
         return jsonify({"errors": e.messages}), 400
@@ -222,12 +231,12 @@ def login():
     login_schema = LoginSchema()
     data = request.get_json()
     data = login_schema.load(data)
-    email = data.get('email')
+    username = data.get('username')
     password = data.get('password')
 
     # Perform user authentication here
-    if email == "test@example.com" and password == "password":
-        access_token = create_access_token(identity=email, expires_delta=datetime.timedelta(hours=1))
+    if username == "test@example.com" and password == "password":
+        access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(hours=1))
         response = make_response(jsonify({"msg": "Login successful"}))
         response.set_cookie(
             'jwt',

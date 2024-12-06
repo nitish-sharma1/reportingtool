@@ -36,10 +36,17 @@ function SignUpForm({ setSignUpStatus }) {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/v1/signup', userData);
+      const response = await axios.post(
+        'http://localhost:5000/api/v1/signup',
+        userData,
+        {
+          withCredentials: true, // Ensure cookies are sent/received
+        }
+      );
+    
       if (response.status === 201) {
         alert('Sign up successful!');
-        console.log(response.data); // Optionally handle JWT token or other response data
+        console.log(response.data); // Handle response data if needed
         setSignUpStatus(false); // Switch to login form after successful sign-up
       }
     } catch (err) {
@@ -56,6 +63,7 @@ function SignUpForm({ setSignUpStatus }) {
       }
       console.error(err);
     }
+    
   };
 
   return (
