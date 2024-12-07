@@ -187,7 +187,6 @@ def sign_up():
             'reportconfigdb',
             'users'
         )
-        # Convert cursor to a list to check for existing users
         existing_users = list(cursor)
         if existing_users:
             return jsonify({"error": "User with this email already exists"}), 400
@@ -196,22 +195,19 @@ def sign_up():
         hashed_password = bcrypt.hashpw(
             user_data["password"].encode('utf-8'), bcrypt.gensalt()
         )
-        user_data["password"] = hashed_password.decode('utf-8')  # Store as a string
+        user_data["password"] = hashed_password.decode('utf-8')  # Store as string
 
-        # Generate the JWT token BEFORE inserting the user
-        try:
-            access_token = create_access_token(
-                identity=user_data["email"],
-                expires_delta=datetime.timedelta(hours=1)
-            )
-        except Exception as jwt_error:
-            return jsonify({"error": "Failed to generate JWT token", "details": str(jwt_error)}), 500
-
-        # Add the user to the database ONLY if JWT generation succeeds
+        # Add the user to the database
         MongoHelper().add_data_to_mongo_collection(
             user_data,
             'reportconfigdb',
             'users'
+        )
+
+        # Generate a JWT token
+        access_token = create_access_token(
+            identity=user_data["email"],
+            expires_delta=datetime.timedelta(hours=1)
         )
 
         # Create a response and set the JWT token as an HTTP-only cookie
@@ -220,7 +216,7 @@ def sign_up():
             "jwt",  # Cookie name
             access_token,  # Cookie value
             httponly=True,  # Prevent access via JavaScript
-            secure=True,  # Only send over HTTPS (set True in production)
+            secure=True,  # Only send over HTTPS in production
             samesite='Strict',  # CSRF protection
             max_age=3600  # Cookie expiration in seconds (1 hour)
         )
@@ -240,43 +236,44 @@ def login():
     try:
         # Parse and validate input data
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "Request payload is empty"}), 400
-
-        # Validate and deserialize input data
-        login_data = login_schema.load(data)
-        username = login_data.get('username')
-        password = login_data.get('password')
+        data = login_schema.load(data)
+        username = data.get('username')
+        password = data.get('password')
 
         # Fetch user data from MongoDB
-        user_cursor = MongoHelper().get_data_from_mongo(
-            {"email": username},  # Assuming 'email' is the username field
+        cursor = MongoHelper().get_data_from_mongo(
+            {"username": username},
             'reportconfigdb',
             'users'
         )
-        user_data = list(user_cursor)
+        existing_users = list(cursor)
 
-        # Check if user exists
-        if not user_data:
+        # Check if the user exists
+        if not existing_users:
             return jsonify({"msg": "Invalid credentials"}), 401
 
-        # Validate password
-        user = user_data[0]
-        stored_password_hash = user.get('password')  # Assuming password is hashed
-        if not stored_password_hash or not check_password_hash(stored_password_hash, password):
-            return jsonify({"msg": "Invalid credentials"}), 401
+        user = existing_users[0]
 
-        # Generate JWT token
-        access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(hours=1))
+        # Verify the password
+        stored_hashed_password = user["password"].encode('utf-8')
+        if not bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password):
+            return jsonify({"msg": "Invalid password"}), 401
 
-        # Set the token in an HTTP-only cookie
-        response = make_response(jsonify({"msg": "Login successful"}))
+        # Generate the JWT token
+        access_token = create_access_token(
+            identity=username,
+            expires_delta=datetime.timedelta(hours=1)
+        )
+
+        # Create a response and set the JWT token as an HTTP-only cookie
+        response = make_response(jsonify({"msg": "Login successful"}), 200)
         response.set_cookie(
-            'jwt',
+            "jwt",
             access_token,
             httponly=True,
-            secure=False,  # Set to True in production with HTTPS
-            samesite='Lax'  # Adjust based on your requirements
+            secure=True,  # Only send over HTTPS in production
+            samesite='Strict',  # CSRF protection
+            max_age=3600  # Cookie expiration in seconds (1 hour)
         )
         return response
 
@@ -285,6 +282,7 @@ def login():
 
     except Exception as e:
         return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run()

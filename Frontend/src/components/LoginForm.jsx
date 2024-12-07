@@ -3,6 +3,7 @@ import femodel from '../assets/FEmodel.jpg';
 import { FaGoogle } from "react-icons/fa";
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 function LoginForm({ setSignUpStatus, setLogin }) {
   const [username, setUsername] = useState('');
@@ -12,7 +13,6 @@ function LoginForm({ setSignUpStatus, setLogin }) {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       console.log('Google Login Success:', tokenResponse);
-      // You can send tokenResponse.access_token to your backend for verification
       setLogin(true); // Log the user in after successful Google sign-in
     },
     onError: () => {
@@ -22,11 +22,14 @@ function LoginForm({ setSignUpStatus, setLogin }) {
 
   const handleLogin = async () => {
     try {
+      // Hash the password before sending it
+      const hashedPassword = CryptoJS.SHA256(password).toString(); // Example hashing algorithm
+
       const response = await axios.post(
         'http://localhost:5000/api/v1/login',
         {
           username,
-          password,
+          password: hashedPassword, // Send the hashed password
         },
         { withCredentials: true } // Enable sending cookies
       );

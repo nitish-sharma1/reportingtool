@@ -3,8 +3,9 @@ import Logo from './Logo';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm'; // Assume you have or will create this component
 
-function LoginCard() {
+function LoginCard({ setLogin }) {
   const [signUpStatus, setSignUpStatus] = useState(false);
+
 
   return (
     <div className="bg-off-white w-2/5 p-4 rounded-lg flex flex-col items-center justify-center">
@@ -12,9 +13,9 @@ function LoginCard() {
         <Logo />
       </div>
       {signUpStatus ? (
-        <SignUpForm setSignUpStatus={setSignUpStatus} />
+        <SignUpForm setSignUpStatus={setSignUpStatus} setLogin={setLogin} />
       ) : (
-        <LoginForm setSignUpStatus={setSignUpStatus} />
+        <LoginForm setSignUpStatus={setSignUpStatus} setLogin={setLogin} />
       )}
     </div>
   );

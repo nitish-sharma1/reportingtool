@@ -4,11 +4,10 @@ import femodel from '../assets/signup.jpg';
 import CryptoJS from 'crypto-js';
 
 function encryptPassword(password) {
-  const secretKey = 'your-secret-key'; // Use a secure, pre-shared key
-  return CryptoJS.AES.encrypt(password, secretKey).toString();
+    return CryptoJS.SHA256(password).toString(); // Example hashing algorithm
 }
 
-function SignUpForm({ setSignUpStatus }) {
+function SignUpForm({ setSignUpStatus, setLogin }) {
   // State to store form inputs and error message
   const [formData, setFormData] = useState({
     username: '',
@@ -48,6 +47,7 @@ function SignUpForm({ setSignUpStatus }) {
         alert('Sign up successful!');
         console.log(response.data); // Handle response data if needed
         setSignUpStatus(false); // Switch to login form after successful sign-up
+        setLogin(true);
       }
     } catch (err) {
       // Handle errors
