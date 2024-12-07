@@ -1,5 +1,5 @@
 import bcrypt
-from flask import Flask, request, jsonify,make_response
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager, create_access_token
@@ -15,11 +15,9 @@ from bson.json_util import dumps, loads
 from bson.objectid import ObjectId
 from Schema.userschema import UserSchema
 import datetime
-from werkzeug.security import check_password_hash,generate_password_hash
-
+from werkzeug.security import check_password_hash, generate_password_hash
 
 load_dotenv()  #laod the env variables
-
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')  # Load JWT secret key from .env
@@ -198,16 +196,20 @@ def sign_up():
         user_data["password"] = hashed_password.decode('utf-8')  # Store as string
 
         # Add the user to the database
-        MongoHelper().add_data_to_mongo_collection(
+        result = MongoHelper().add_data_to_mongo_collection(
             user_data,
             'reportconfigdb',
             'users'
         )
 
-        # Generate a JWT token
+        # Get the inserted user's _id
+        user_id = str(result.inserted_id)
+
+        # Generate a JWT token including the user's email and _id
         access_token = create_access_token(
             identity=user_data["email"],
-            expires_delta=datetime.timedelta(hours=1)
+            expires_delta=datetime.timedelta(hours=1),
+            user_id=user_id  # Include _id in the token payload
         )
 
         # Create a response and set the JWT token as an HTTP-only cookie
@@ -259,18 +261,22 @@ def login():
         if not bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password):
             return jsonify({"msg": "Invalid password"}), 401
 
-        # Generate the JWT token
+        # Get the user's _id and convert it to string
+        user_id = str(user["_id"])
+
+        # Generate the JWT token with email (or username) and user_id as additional claims
         access_token = create_access_token(
-            identity=username,
-            expires_delta=datetime.timedelta(hours=1)
+            identity=username,  # Store username as the identity
+            expires_delta=datetime.timedelta(hours=1),  # Expiry time for token
+            additional_claims={"user_id": user_id}  # Include user_id in additional claims
         )
 
         # Create a response and set the JWT token as an HTTP-only cookie
         response = make_response(jsonify({"msg": "Login successful"}), 200)
         response.set_cookie(
-            "jwt",
-            access_token,
-            httponly=True,
+            "jwt",  # Cookie name
+            access_token,  # Cookie value
+            httponly=True,  # Prevent access via JavaScript
             secure=True,  # Only send over HTTPS in production
             samesite='Strict',  # CSRF protection
             max_age=3600  # Cookie expiration in seconds (1 hour)
@@ -282,6 +288,8 @@ def login():
 
     except Exception as e:
         return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
+
+
 
 
 if __name__ == '__main__':
