@@ -33,6 +33,9 @@ function AddNewOutboundService() {
             "smtp_server" : smtpServer,
             "app_password" : appPassword,
             "login_email" : loginEmail
+      },{
+        // Include credentials in the request
+        withCredentials: true,
       }).then(function (response) {
         console.log(response);
       })

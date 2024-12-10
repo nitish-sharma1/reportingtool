@@ -209,7 +209,7 @@ def sign_up():
         access_token = create_access_token(
             identity=user_data["email"],
             expires_delta=datetime.timedelta(hours=1),
-            user_id=user_id  # Include _id in the token payload
+            additional_claims={"user_id": user_id}  # Include user_id in additional claims
         )
 
         # Create a response and set the JWT token as an HTTP-only cookie

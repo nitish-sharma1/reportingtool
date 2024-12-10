@@ -20,6 +20,9 @@ function AddDataSourceService() {
       "password" : password,
       "hostname"  : hostname,
       "port" : parseInt(port,10)
+  },{
+    // Include credentials in the request
+    withCredentials: true,
   }).then(function (response) {
     console.log(response);
   })

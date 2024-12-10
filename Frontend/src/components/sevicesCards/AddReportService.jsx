@@ -73,6 +73,9 @@ useEffect(() => {
         "query" : query,
         "outbound_service_name" : outboundServiceNameVal,
         "isEnabled" : true
+    },{
+      // Include credentials in the request
+      withCredentials: true,
     }).then(function (response) {
     console.log(response);
   })

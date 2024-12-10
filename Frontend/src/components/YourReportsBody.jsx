@@ -33,7 +33,10 @@ function YourReportsBody() {
   // Fetch all reports on mount
   useEffect(() => {
     axios
-      .get(import.meta.env.VITE_GET_All_REPORTS)
+      .get(import.meta.env.VITE_GET_All_REPORTS,{
+        // Include credentials in the request
+        withCredentials: true,
+      })
       .then((response) => {
         const reportData = response.data; // Directly use the response as it is an array
         if (Array.isArray(reportData)) {
