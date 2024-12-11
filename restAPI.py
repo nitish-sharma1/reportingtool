@@ -2,7 +2,7 @@ import bcrypt
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import os
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager, create_access_token,verify_jwt_in_request,get_jwt_identity
 from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
@@ -24,6 +24,18 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')  # Load JWT secret ke
 app.config['ENV'] = os.getenv('FLASK_ENV', 'production')  # Optional: Load Flask environment (default to 'production')
 jwt = JWTManager(app)
 CORS(app, supports_credentials=True)
+
+
+@app.before_request
+def jwt_validation_middleware():
+    exempt_routes = ['/api/v1/login', '/api/v1/signup']  # Add routes you want to exempt from validation
+    if request.path in exempt_routes:
+        return  # Skip validation for these routes
+
+    try:
+        verify_jwt_in_request()  # Validates JWT token
+    except Exception as e:
+        return jsonify({"message": "Unauthorized", "error": str(e)}), 401
 
 
 @app.route('/api/v1/getinstancename', methods=["GET"])
