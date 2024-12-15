@@ -12,27 +12,46 @@ function AddDataSourceService() {
   const [hostname,setHostname] = useState('')
   const [port , setPort] = useState('')
   useEffect(() => {
-    if(btnState){
-    axios.post(import.meta.env.VITE_ADD_DATASOURCE_ENDPOINT,{
-      "datasource_type" : dataSourceName,
-      "instance_name" : instanceName,
-      "username" : username,
-      "password" : password,
-      "hostname"  : hostname,
-      "port" : parseInt(port,10)
-  },{
-    // Include credentials in the request
-    withCredentials: true,
-  }).then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  }
-  )}
-  setBtnState(false)
-}
-  ,[btnState]);
+    if (btnState) {
+      // Extract the JWT token from cookies
+      const jwtToken = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('jwt'))
+        ?.split('=')[1];
+
+      if (!jwtToken) {
+        console.error("JWT token not found in cookies");
+        return;
+      }
+
+      axios
+        .post(
+          import.meta.env.VITE_ADD_DATASOURCE_ENDPOINT,
+          {
+            datasource_type: dataSourceName,
+            instance_name: instanceName,
+            username: username,
+            password: password,
+            hostname: hostname,
+            port: parseInt(port, 10),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`, // Set the Authorization header
+            },
+            withCredentials: true, // Include cookies if needed
+          }
+        )
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+
+      setBtnState(false); // Reset the button state
+    }
+  }, [btnState]);
   function handleButtonClick() {
     setBtnState(btnState+1)
   }

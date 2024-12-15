@@ -1,5 +1,5 @@
 import bcrypt
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response,Response
 from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, decode_token
@@ -27,16 +27,26 @@ CORS(app, supports_credentials=True)
 
 
 @app.before_request
-def jwt_validation_middleware():
-    exempt_routes = ['/api/v1/login', '/api/v1/signup', '/api/v1/getinstancename', '/api/v1/getoutboundservice']  # Add
-    # routes you want to exempt from validation
+def basic_authentication():
+    if request.method.lower() == 'options':
+        return Response()
+    exempt_routes = ['/api/v1/login', '/api/v1/signup', '/api/v1/getinstancename', '/api/v1/getoutboundservice']
     if request.path in exempt_routes:
         return  # Skip validation for these routes
 
-    # Extract the JWT token from cookies
-    token = request.cookies.get('jwt')  # Replace 'jwt' with the cookie name that stores your token
+    token = request.cookies.get('jwt')  # Extract JWT token from cookies
     if not token:
         return jsonify({"message": "Unauthorized", "error": "Missing JWT token in cookies"}), 401
+
+    try:
+        verify_jwt_in_request()  # Validate the JWT token
+    except Exception as e:
+        return jsonify({"message": "Unauthorized", "error": str(e)}), 401
+
+
+
+
+# Other routes (get_instance_name, get_outbound_service_name, etc.) remain unchanged.
 
 @app.route('/api/v1/getinstancename', methods=["GET"])
 def get_instance_name():
