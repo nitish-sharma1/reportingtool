@@ -30,16 +30,20 @@ CORS(app, supports_credentials=True)
 def basic_authentication():
     if request.method.lower() == 'options':
         return Response()
+
     exempt_routes = ['/api/v1/login', '/api/v1/signup', '/api/v1/getinstancename', '/api/v1/getoutboundservice']
     if request.path in exempt_routes:
         return  # Skip validation for these routes
 
-    token = request.cookies.get('jwt')  # Extract JWT token from cookies
-    if not token:
-        return jsonify({"message": "Unauthorized", "error": "Missing JWT token in cookies"}), 401
+    # Extract token from Authorization header
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({"message": "Unauthorized", "error": "Missing Authorization Header"}), 401
 
     try:
-        verify_jwt_in_request()  # Validate the JWT token
+        # Expect "Bearer <token>"
+        token = auth_header.split(" ")[1]
+        verify_jwt_in_request()
     except Exception as e:
         return jsonify({"message": "Unauthorized", "error": str(e)}), 401
 

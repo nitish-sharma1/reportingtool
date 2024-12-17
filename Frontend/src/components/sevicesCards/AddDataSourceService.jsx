@@ -13,17 +13,6 @@ function AddDataSourceService() {
   const [port , setPort] = useState('')
   useEffect(() => {
     if (btnState) {
-      // Extract the JWT token from cookies
-      const jwtToken = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('jwt'))
-        ?.split('=')[1];
-
-      if (!jwtToken) {
-        console.error("JWT token not found in cookies");
-        return;
-      }
-
       axios
         .post(
           import.meta.env.VITE_ADD_DATASOURCE_ENDPOINT,
@@ -36,9 +25,6 @@ function AddDataSourceService() {
             port: parseInt(port, 10),
           },
           {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`, // Set the Authorization header
-            },
             withCredentials: true, // Include cookies if needed
           }
         )
