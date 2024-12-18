@@ -7,6 +7,7 @@ class OutboundServiceSMTP(Schema):
     smtp_server = fields.Str(required=True)
     app_password = fields.Str(required=True)
     login_email = fields.Str(required=True)
+    user_id = fields.Str(required=True)
 
     class Meta:
         strict = True
@@ -18,6 +19,7 @@ class OutboundServiceAWS(Schema):
     access_key = fields.Str(required=True)
     secret_key = fields.Str(required=True)
     aws_region = fields.Str(required=True)
+    user_id = fields.Str(required=True)
 
     class Meta:
         strict = True
@@ -31,6 +33,7 @@ class OutboundServiceMFT(Schema):
     sftp_username = fields.Str(required=True)
     sftp_password = fields.Str(required=True)
     remote_file_path = fields.Str(required=True)
+    user_id = fields.Str(required=True)
 
     class Meta:
         strict = True

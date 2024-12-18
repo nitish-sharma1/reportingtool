@@ -57,6 +57,9 @@ function AddNewOutboundService() {
             "access_key" : accessKey,
             "secret_key" : secretKey,
             "aws_region" : awsRegion
+      },{
+        // Include credentials in the request
+        withCredentials: true,
       }).then(function (response) {
         console.log(response);
       })
@@ -79,6 +82,9 @@ function AddNewOutboundService() {
             "sftp_username" : sftpUsername,
             "sftp_password" : sftpPassword,
             "remote_file_path" : remoteFilePath
+      },{
+        // Include credentials in the request
+        withCredentials: true,
       }).then(function (response) {
         console.log(response);
       })

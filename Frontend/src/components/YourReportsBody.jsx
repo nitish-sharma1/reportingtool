@@ -11,7 +11,9 @@ function YourReportsBody() {
     const url = `http://localhost:5000/api/v1/change-report-status/${reportId}`;
 
     axios
-      .put(url)
+      .put(url,{},{
+        withCredentials: true, // Include cookies if needed
+      })
       .then((res) => {
         console.log('Report status updated:', res.data);
         // Optionally, update the specific report status in the `reports` state

@@ -1,8 +1,8 @@
 import bcrypt
-from flask import Flask, request, jsonify, make_response,Response
+from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
 import os
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request,  get_jwt
+from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt
 from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
@@ -31,7 +31,7 @@ def basic_authentication():
     if request.method.lower() == 'options':
         return Response()
 
-    exempt_routes = ['/api/v1/login', '/api/v1/signup', '/api/v1/getinstancename', '/api/v1/getoutboundservice']
+    exempt_routes = ['/api/v1/login', '/api/v1/signup']
     if request.path in exempt_routes:
         return  # Skip validation for these routes
 
@@ -68,8 +68,6 @@ def basic_authentication():
         return jsonify({"message": "Unauthorized", "error": str(e)}), 401
 
 
-
-
 # Other routes (get_instance_name, get_outbound_service_name, etc.) remain unchanged.
 
 @app.route('/api/v1/getinstancename', methods=["GET"])
@@ -77,8 +75,16 @@ def get_instance_name():
     client = MongoHelper().create_client('reportconfigdb')
     mydb = client['reportconfigdb']
     collection = mydb['datasource']
+
     try:
-        instance_names = collection.distinct("instance_name")
+        # Extract `user_id` from the request arguments
+        jwt_data = get_jwt()  # Get decoded JWT claims
+        user_id = jwt_data.get("user_id")  # Replace with actual claim key if different
+        if not user_id:
+            return jsonify({"error": "Missing user_id parameter"}), 400
+
+        # Query the collection for instance names filtered by user_id
+        instance_names = collection.distinct("instance_name", {"user_id": user_id})
         return jsonify({"instance_names": instance_names})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -91,8 +97,16 @@ def get_outbound_service_name():
     client = MongoHelper().create_client('reportconfigdb')
     mydb = client['reportconfigdb']
     collection = mydb['outbound_services']
+
     try:
-        service_name = collection.distinct("outbound_service_name")
+        # Extract `user_id` from the request arguments
+        jwt_data = get_jwt()  # Get decoded JWT claims
+        user_id = jwt_data.get("user_id")  # Replace with actual claim key if different
+        if not user_id:
+            return jsonify({"error": "Missing user_id parameter"}), 400
+
+        # Query the collection for outbound services filtered by user_id
+        service_name = collection.distinct("outbound_service_name", {"user_id": user_id})
         return jsonify({"service_name": service_name})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -164,13 +178,19 @@ def add_outbound_service():
 @app.route('/api/v1/get-report-data', methods=["GET"])
 def get_report_data():
     try:
+        # Extract `user_id` from the request arguments
+        jwt_data = get_jwt()  # Get decoded JWT claims
+        user_id = jwt_data.get("user_id")  # Replace with actual claim key if different
+        if not user_id:
+            return jsonify({"error": "Missing user_id parameter"}), 400
+
         # Create MongoDB client and connect to the database
         with MongoHelper().create_client('reportconfigdb') as client:
             mydb = client['reportconfigdb']
             collection = mydb['reportconfigs']
 
-            # Fetch and serialize the reports
-            reports = list(collection.find())  # Convert cursor to a list
+            # Fetch and serialize the reports filtered by user_id
+            reports = list(collection.find({"user_id": user_id}))  # Filter reports by user_id
             serialized_reports = dumps(reports)  # Serialize BSON to JSON
 
             # Return the serialized data directly

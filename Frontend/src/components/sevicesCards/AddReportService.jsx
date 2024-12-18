@@ -30,7 +30,9 @@ function AddReportService() {
     const valuesOnly = selectedOptions.map(option => option.value);
     setFrequency(valuesOnly);
   };
-  useEffect(() => {axios.get(import.meta.env.VITE_GET_INSTANCE_ENDPOINT)
+  useEffect(() => {axios.get(import.meta.env.VITE_GET_INSTANCE_ENDPOINT,{
+    withCredentials: true, // Include cookies if needed
+  })
     .then(
     response => {console.log(response.data)
     getInstanceName(response.data.instance_names)
@@ -39,7 +41,9 @@ function AddReportService() {
 ).catch(error => {console.log(error)})},[])
 
                                                                                                                                                                                                                                      
-useEffect(() => {axios.get(import.meta.env.VITE_GET_OUTBOUND_SERVICE_ENDPOINT)
+useEffect(() => {axios.get(import.meta.env.VITE_GET_OUTBOUND_SERVICE_ENDPOINT,{
+  withCredentials: true, // Include cookies if needed
+})
     .then(
     response => {console.log(response.data)
     getOutboundServiceName(response.data.service_name)
