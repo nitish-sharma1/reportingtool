@@ -2,7 +2,7 @@ import bcrypt
 from flask import Flask, request, jsonify, make_response,Response
 from flask_cors import CORS
 import os
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, decode_token
+from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request,  get_jwt
 from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
@@ -35,15 +35,35 @@ def basic_authentication():
     if request.path in exempt_routes:
         return  # Skip validation for these routes
 
-    # Extract token from Authorization header
+    # Extract JWT token from cookies
+    jwt_token = request.cookies.get('jwt')
+    if jwt_token:
+        # Inject the token into the Authorization header as "Bearer <token>"
+        request.environ['HTTP_AUTHORIZATION'] = f'Bearer {jwt_token}'
+
+    # Extract token from the Authorization header
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return jsonify({"message": "Unauthorized", "error": "Missing Authorization Header"}), 401
 
     try:
-        # Expect "Bearer <token>"
-        token = auth_header.split(" ")[1]
+        # Verify JWT token
         verify_jwt_in_request()
+
+        # Extract user_id from JWT claims
+        jwt_data = get_jwt()  # Get decoded JWT claims
+        user_id = jwt_data.get("user_id")  # Replace with actual claim key if different
+
+        if not user_id:
+            return jsonify({"message": "Unauthorized", "error": "Missing user_id in JWT"}), 401
+
+        # Add user_id to request body dynamically
+        # NOTE: request.json may be None if the body doesn't exist yet
+        if request.is_json:
+            request.json["user_id"] = user_id
+        else:
+            request._cached_json = {"user_id": user_id}  # Inject JSON body
+
     except Exception as e:
         return jsonify({"message": "Unauthorized", "error": str(e)}), 401
 

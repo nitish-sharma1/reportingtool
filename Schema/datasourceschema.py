@@ -8,6 +8,7 @@ class DataSourceSchema(Schema):
     password = fields.Str(required=True)
     hostname = fields.Str(required=True)
     port = fields.Int(required=True)
+    user_id = fields.Str(required=True)
 
     class Meta:
         strict = True
