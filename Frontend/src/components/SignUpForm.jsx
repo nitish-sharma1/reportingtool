@@ -36,7 +36,7 @@ function SignUpForm({ setSignUpStatus, setLogin }) {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/v1/signup',
+        import.meta.env.VITE_SIGNUP_ENDPOINT, // Use the signup endpoint
         userData,
         {
           withCredentials: true, // Ensure cookies are sent/received

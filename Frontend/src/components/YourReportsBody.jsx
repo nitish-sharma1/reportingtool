@@ -8,7 +8,9 @@ function YourReportsBody() {
   // Function to handle PUT call
   const handleUpdateReportStatus = (reportId) => {
 
-    const url = `http://localhost:5000/api/v1/change-report-status/${reportId}`;
+    const endpoint = import.meta.env.VITE_CHANGE_REPORT_STATUS;
+
+    const url = `${endpoint}${reportId}`;
 
     axios
       .put(url,{},{

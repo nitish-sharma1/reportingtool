@@ -26,7 +26,7 @@ function LoginForm({ setSignUpStatus, setLogin }) {
       const hashedPassword = CryptoJS.SHA256(password).toString(); // Example hashing algorithm
 
       const response = await axios.post(
-        'http://localhost:5000/api/v1/login',
+        import.meta.env.VITE_LOGIN_ENDPOINT,
         {
           username,
           password: hashedPassword, // Send the hashed password
