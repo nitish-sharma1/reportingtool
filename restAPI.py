@@ -2,7 +2,7 @@ import bcrypt
 from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
 import os
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt
+from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt, jwt_required
 from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
@@ -354,6 +354,18 @@ def login():
 
     except Exception as e:
         return jsonify({"msg": "Something went wrong", "exception": str(e)}), 500
+
+
+# Store blacklisted tokens
+blacklist = set()
+
+
+@app.route('/api/v1/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]  # Get the token's unique identifier
+    blacklist.add(jti)
+    return jsonify({"msg": "Successfully logged out"}), 200
 
 
 if __name__ == '__main__':
