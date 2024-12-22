@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import avatar from '../assets/avatar.png';
 import { MdNotificationsActive } from "react-icons/md";
 
@@ -28,9 +29,28 @@ function NavUserSection() {
     };
   }, []);
 
-  const handleLogout = () => {
-    console.log("Logged out"); // Replace with actual logout logic
-    closeDropdown();
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/logout", // Replace with your logout endpoint
+        {}, // Pass body if required, else keep it empty
+        {
+          withCredentials: true, // Include cookies in the request
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Logged out successfully");
+        // Redirect to login page or perform post-logout actions
+        window.location.href = "/";
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+
+    closeDropdown(); // Close dropdown
   };
 
   const handleProfile = () => {
@@ -51,7 +71,7 @@ function NavUserSection() {
       {dropdownOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 mt-32 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+          className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
         >
           <button
             onClick={handleProfile}
