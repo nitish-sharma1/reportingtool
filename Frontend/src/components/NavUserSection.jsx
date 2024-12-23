@@ -24,7 +24,7 @@ function NavUserSection() {
   const performLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/logout",
+        import.meta.env.VITE_LOGOUT_ENDPOINT,
         {},
         { withCredentials: true }
       );

@@ -11,7 +11,7 @@ function App() {
   // Helper function to check authentication via the backend
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/v1/check-auth", {
+      const response = await axios.get(import.meta.env.VITE_CHECK_AUTH_ENDPOINT, {
         withCredentials: true, // Include cookies
       });
 
