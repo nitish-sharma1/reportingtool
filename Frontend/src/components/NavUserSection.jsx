@@ -31,13 +31,16 @@ function NavUserSection() {
 
       if (response.status === 200) {
         console.log("Logged out successfully");
-        localStorage.removeItem("isLoggedIn"); // Clear login state from localStorage
-        window.location.href = "/login"; // Redirect to login page
+        
       } else {
         console.error("Logout failed");
       }
     } catch (error) {
       console.error("Error during logout:", error);
+    }
+    finally {
+      localStorage.removeItem("isLoggedIn"); // Clear login state from localStorage
+      window.location.href = "/login"; // Redirect to login page
     }
     closeDropdown();
   };

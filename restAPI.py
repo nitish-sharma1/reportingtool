@@ -2,7 +2,8 @@ import bcrypt
 from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
 import os
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt, jwt_required
+from flask_jwt_extended import (JWTManager, create_access_token, verify_jwt_in_request,
+                                get_jwt, jwt_required, get_jwt_identity)
 from dotenv import load_dotenv
 from services.reportconfigservice.reportconfigservice import Report_config_service
 from Schema.configschema import ConfigSchema
@@ -366,6 +367,16 @@ def logout():
     jti = get_jwt()["jti"]  # Get the token's unique identifier
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
+
+
+@app.route('/api/v1/check-auth', methods=['GET'])
+@jwt_required()  # Ensures the JWT is valid
+def check_auth():
+    try:
+        current_user = get_jwt_identity()
+        return jsonify(authenticated=True, user=current_user), 200
+    except Exception as e:
+        return jsonify(authenticated=False), 401
 
 
 if __name__ == '__main__':
