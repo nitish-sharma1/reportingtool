@@ -7,15 +7,9 @@ function NavUserSection() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const closeDropdown = () => setDropdownOpen(false);
 
-  const closeDropdown = () => {
-    setDropdownOpen(false);
-  };
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -24,37 +18,32 @@ function NavUserSection() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = async () => {
+  const performLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/logout", // Replace with your logout endpoint
-        {}, // Pass body if required, else keep it empty
-        {
-          withCredentials: true, // Include cookies in the request
-        }
+        "http://localhost:5000/api/v1/logout",
+        {},
+        { withCredentials: true }
       );
 
       if (response.status === 200) {
         console.log("Logged out successfully");
-        // Redirect to login page or perform post-logout actions
-        window.location.href = "/";
+        localStorage.removeItem("isLoggedIn"); // Clear login state from localStorage
+        window.location.href = "/login"; // Redirect to login page
       } else {
         console.error("Logout failed");
       }
     } catch (error) {
       console.error("Error during logout:", error);
     }
-
-    closeDropdown(); // Close dropdown
+    closeDropdown();
   };
 
   const handleProfile = () => {
-    console.log("Go to profile"); // Replace with actual navigation logic
+    console.log("Navigate to Profile Page");
     closeDropdown();
   };
 
@@ -67,11 +56,10 @@ function NavUserSection() {
         className="mx-10 cursor-pointer"
         onClick={toggleDropdown}
       />
-      
       {dropdownOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+          className="absolute right-0 mt-32 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
         >
           <button
             onClick={handleProfile}
@@ -80,7 +68,7 @@ function NavUserSection() {
             Profile
           </button>
           <button
-            onClick={handleLogout}
+            onClick={performLogout}
             className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
           >
             Log Out
