@@ -1,28 +1,27 @@
-import React, { useState } from 'react';
-import femodel from '../assets/FEmodel.jpg';
+import React, { useState } from "react";
+import femodel from "../assets/FEmodel.jpg";
 import { FaGoogle } from "react-icons/fa";
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
-import CryptoJS from 'crypto-js';
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import CryptoJS from "crypto-js";
 
 function LoginForm({ setSignUpStatus, setLogin }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      console.log('Google Login Success:', tokenResponse);
+      console.log("Google Login Success:", tokenResponse);
       setLogin(true); // Log the user in after successful Google sign-in
     },
     onError: () => {
-      console.error('Google Login Failed');
+      console.error("Google Login Failed");
     },
   });
 
   const handleLogin = async () => {
     try {
-      // Hash the password before sending it
       const hashedPassword = CryptoJS.SHA256(password).toString(); // Example hashing algorithm
 
       const response = await axios.post(
@@ -38,12 +37,17 @@ function LoginForm({ setSignUpStatus, setLogin }) {
         setLogin(true); // Log the user in
       }
     } catch (err) {
-      // Handle errors
       if (err.response) {
-        setError(err.response.data.msg || 'Invalid credentials');
+        setError(err.response.data.msg || "Invalid credentials");
       } else {
-        setError('Something went wrong. Please try again.');
+        setError("Something went wrong. Please try again.");
       }
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin(); // Trigger login on Enter key press
     }
   };
 
@@ -55,6 +59,7 @@ function LoginForm({ setSignUpStatus, setLogin }) {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={handleKeyDown} // Listen for Enter key press
           className="block w-full p-2 mb-4 border border-gray-300 bg-input rounded"
         />
         <input
@@ -62,6 +67,7 @@ function LoginForm({ setSignUpStatus, setLogin }) {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown} // Listen for Enter key press
           className="block w-full p-2 mb-4 border border-gray-300 bg-input rounded"
         />
         <button
@@ -72,7 +78,7 @@ function LoginForm({ setSignUpStatus, setLogin }) {
         </button>
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         <p className="text-center m-2 text-btn-purple">
-          Do not have the account?{' '}
+          Do not have the account?{" "}
           <button
             onClick={() => setSignUpStatus(true)}
             className="text-btn-purple font-bold underline"
