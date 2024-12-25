@@ -31,17 +31,14 @@ CORS(app, supports_credentials=True)
 def basic_authentication():
     if request.method.lower() == 'options':
         return Response()
-
     exempt_routes = ['/api/v1/login', '/api/v1/signup']
-    if request.path in exempt_routes:
-        return  # Skip validation for these routes
-
     # Extract JWT token from cookies
     jwt_token = request.cookies.get('jwt')
     if jwt_token:
         # Inject the token into the Authorization header as "Bearer <token>"
         request.environ['HTTP_AUTHORIZATION'] = f'Bearer {jwt_token}'
-
+    if request.path in exempt_routes:
+        return  # Skip validation for these routes
     # Extract token from the Authorization header
     auth_header = request.headers.get('Authorization')
     if not auth_header:
@@ -303,6 +300,15 @@ def login():
     login_schema = LoginSchema()
 
     try:
+        # Check for an existing JWT cookie
+        try:
+            verify_jwt_in_request(optional=True)  # Check if a JWT exists
+            current_user = get_jwt_identity()  # Retrieve the identity from the token
+            if current_user:
+                return jsonify({"msg": "Already logged in", "user": current_user}), 200
+        except Exception as jwt_error:
+            pass  # Proceed with normal login flow if no valid JWT
+
         # Parse and validate input data
         data = request.get_json()
         data = login_schema.load(data)
