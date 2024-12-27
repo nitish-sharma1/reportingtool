@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from services.loggingservice.loggingservice import Logger
 from services.datetime_service.datetime_service import Datetime_Service
 from reportingtool.services.reportconfigservice.reportconfigservice import Report_config_service
+import os
 
 load_dotenv()  # Load the env variables
 
@@ -22,7 +23,8 @@ Report_conf = Report_config_service()
 result = Report_conf.get_config(query=query)
 
 producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',
+    bootstrap_servers=os.getenv('KAFKA_SERVER'),
+    api_version=(0, 11, 5),
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 

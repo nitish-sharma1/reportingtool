@@ -6,13 +6,16 @@ from reportingtool.services.datasource_connector.datasource_connector import Con
 from reportingtool.services.excel_report_service.excel_report_service import ExcelReportService
 from services.aws_s3_service.aws_s3_service import S3Upload
 from services.loggingservice.loggingservice import Logger
+import os
+from dotenv import load_dotenv
 
+load_dotenv()  # Load the env variables
 logger = Logger()  # Starting the logger for the consumer
 logger.info('Started executing the consumer ...')
 
 consumer = KafkaConsumer(
     'report_topic',
-    bootstrap_servers='localhost:9092',
+    bootstrap_servers=os.getenv('KAFKA_SERVER'),
     value_deserializer=lambda m: json.loads(m.decode('utf-8'))
 )
 
