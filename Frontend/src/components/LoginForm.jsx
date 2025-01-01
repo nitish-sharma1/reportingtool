@@ -35,6 +35,7 @@ function LoginForm({ setSignUpStatus, setLogin }) {
       if (response.status === 200) {
         console.log(response.data.msg); // Login successful
         setLogin(true); // Log the user in
+        window.location.href = "/reports"; // Redirect to login page
       }
     } catch (err) {
       if (err.response) {
