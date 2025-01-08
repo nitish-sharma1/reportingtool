@@ -6,6 +6,7 @@ from reportingtool.services.datasource_connector.datasource_connector import Con
 from reportingtool.services.excel_report_service.excel_report_service import ExcelReportService
 from services.aws_s3_service.aws_s3_service import S3Upload
 from services.loggingservice.loggingservice import Logger
+from reportingtool.services.reportconfigservice.reportconfigservice import Report_config_service
 import os
 from dotenv import load_dotenv
 
@@ -20,9 +21,12 @@ consumer = KafkaConsumer(
     value_deserializer=lambda m: json.loads(m.decode('utf-8'))
 )
 
+report_conf_service = Report_config_service()
+
 for message in consumer:
     logger.info(f'Consumed message: {message.value}')
     report_details = message.value
+    user_id = report_details['user_id']
     query = report_details['query']
     database_type = report_details['database_type']
     instance_name = report_details['instance_name']
@@ -31,6 +35,16 @@ for message in consumer:
     logger.info(f'Processing report: {report_name}')
 
     try:
+        # Query MongoDB for the outbound communication type based on user_id
+        outbound_query = {"user_id": user_id}
+        outbound_config = report_conf_service.get_config(query=outbound_query)
+
+        if not outbound_config:
+            logger.error(f'No outbound configuration found for user_id: {user_id}')
+            continue
+
+        outbound_config = outbound_config[0]  # Assuming only one config per user_id
+
         connector = Connector(database_type=database_type)
         conn = connector.create_engine(instance_name=instance_name)
 
@@ -44,9 +58,20 @@ for message in consumer:
                 continue  # Skip to the next report
             excel_helper = ExcelReportService()
             generated_file_path = excel_helper.generate_excel(headers, data, report_name)
-            s3 = S3Upload()
-            s3.upload_doc_to_s3(generated_file_path, 'dnireports', f'{report_name}.xlsx')
-            logger.info(f'Report {report_name} successfully generated and uploaded.')
+
+            # Process outbound communication based on the type
+            if outbound_config['outbound_service_type'] == 'AWS':
+                s3 = S3Upload()
+                s3.upload_doc_to_s3(generated_file_path, 'dnireports', f'{report_name}.xlsx')
+                logger.info(f'Report {report_name} successfully generated and uploaded to S3.')
+            elif outbound_config['outbound_service_type'] == 'SMTP':
+                # Add SMTP processing logic here
+                pass
+            elif outbound_config['outbound_service_type'] == 'MFT':
+                # Add MFT processing logic here
+                pass
+            else:
+                logger.error(f'Unknown outbound service type: {outbound_config["outbound_service_type"]}')
 
     except SQLAlchemyError as db_error:
         logger.error(f"Database error for report '{report_name}': {db_error}")
